@@ -7,8 +7,10 @@ from jobplus.models import db, User
 
 
 def register_blueprint(app):
-    from jobplus.handlers import front
+    from jobplus.handlers import front, user, seeker
     app.register_blueprint(front)
+    app.register_blueprint(user)
+    app.register_blueprint(seeker)
 
 
 def register_extensions(app):

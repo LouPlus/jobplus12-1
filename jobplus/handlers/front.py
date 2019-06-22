@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
-from flask_login import login_user, logout_user
+import os
+
+from flask import Blueprint, render_template, redirect, url_for, flash, send_from_directory, current_app, make_response
+from flask_login import login_user, logout_user, login_required
 
 from jobplus.forms import RegCompanyFrom, RegSeekerForm, LoginForm
 
@@ -43,7 +45,20 @@ def login():
 
 
 @front.route('/logout')
+@login_required
 def logout():
     logout_user()
     flash('退出成功！', 'success')
     return redirect(url_for('.index'))
+
+
+@front.route('/resumes/<filename>')
+@login_required
+def resume(filename):
+    resume_folder_name = 'resumes'
+    local_folder = os.path.join(os.path.dirname(current_app.instance_path),
+                                'jobplus',
+                                resume_folder_name)
+    response = make_response(send_from_directory(local_folder, filename, as_attachment=True))
+    response.headers["Content-Disposition"] = "attachment; filename={}".format(filename.encode().decode('latin-1'))
+    return response
