@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -13,7 +14,7 @@ class Base(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-class User(Base):
+class User(Base, UserMixin):
     # 求职者角色
     ROLE_SEEKER = 10
     # 企业角色
@@ -65,6 +66,13 @@ class User(Base):
         else:
             return '求职者'
 
+    @property
+    def name(self):
+        if self.seeker:
+            return self.seeker.name
+        elif self.company:
+            return self.company.name
+
 
 class Seeker(Base):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,7 +81,7 @@ class Seeker(Base):
     # 姓名
     name = db.Column(db.String(64), nullable=False)
     # 电话
-    phone = db.Column(db.String(64), nullable=False)
+    phone = db.Column(db.String(64))
     # 工作年限
     work_year = db.Column(db.SmallInteger)
     # 简历文件地址
