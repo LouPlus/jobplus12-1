@@ -43,7 +43,9 @@
                         {{ current_user.name }} <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="">个人中心</a></li>
+                        {% if not current_user.is_admin %}
+                            <li><a href="{{ url_for('user.index') }}">个人中心</a></li>
+                        {% endif %}
                         <li><a href="{{ url_for('front.logout') }}">退出</a></li>
                     </ul>
                 {% endif %}

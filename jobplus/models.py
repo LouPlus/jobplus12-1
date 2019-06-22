@@ -76,7 +76,7 @@ class User(Base, UserMixin):
 
 class Seeker(Base):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User')
     # 姓名
     name = db.Column(db.String(64), nullable=False)
@@ -94,7 +94,7 @@ class Seeker(Base):
 
 class Company(Base):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user = db.relationship('User')
     # 名称
     name = db.Column(db.String(64), nullable=False)
@@ -114,8 +114,8 @@ class Company(Base):
 job_tag = db.Table(
     'job_tag',
     Base.metadata,
-    db.Column('job_id', db.Integer, db.ForeignKey('job.id'), primary_key=True, ),
-    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True, )
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, ),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id', ondelete='CASCADE'), primary_key=True, )
 )
 
 
@@ -130,7 +130,7 @@ class Job(Base):
 
     id = db.Column(db.Integer, primary_key=True)
     # 发布工作公司ID
-    company_id = db.Column(db.Integer, db.ForeignKey('company.id'), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey('company.id', ondelete='CASCADE'), nullable=False)
     company = db.relationship('Company', uselist=False, backref='jobs')
     # 名称
     name = db.Column(db.String(64), nullable=False, index=True)
