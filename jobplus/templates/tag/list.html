@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% from "macros.html" import render_pagination %}
+{% block title %}
+    标签管理
+{% endblock %}
+{% block content %}
+    <div class="tag-list">
+        <h1><a href="{{ url_for('user.index') }}">{{ job.company.name }}</a>的职位：{{ job.name }}</h1>
+        <p>
+            <a class="btn btn-primary btn-lg"
+               href="{{ url_for('tag.company_tag_create',job_id=job.id) }}"
+               role="button">添加标签</a>
+        </p>
+        <hr>
+        {% if tags %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>名称</td>
+                    <td>操作</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for tag in tags %}
+                    <tr>
+                        <td>{{ tag.name }}</td>
+                        <td>
+                            <a href="{{ url_for('tag.company_tag_delete',job_id=job.id,tag_id=tag.id) }}"
+                               class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}

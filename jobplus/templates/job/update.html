@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import render_form %}
+{% block title %}
+    发布职位
+{% endblock %}
+{% block content %}
+    <div class="form">
+        <h1>发布职位</h1>
+        {{ render_form(form,url=url_for('job.update',job_id=job_id)) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% from "macros.html" import render_pagination %}
+{% block title %}
+    个人中心
+{% endblock %}
+{% block content %}
+    <div class="jumbotron">
+        <h1>Hello, {{ current_user.name }}</h1>
+        <p>...</p>
+        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+    </div>
+    <div class="job-list">
+        <h1>职位列表</h1>
+        <p><a class="btn btn-primary btn-lg" href="{{ url_for('job.publish') }}" role="button">发布职位</a></p>
+        <hr>
+        {% if pagination.items %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>名称</td>
+                    <td>工作地点</td>
+                    <td>薪资范围</td>
+                    <td>操作</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for job in pagination.items %}
+                    <tr>
+                        <td>{{ job.name }}</td>
+                        <td>{{ job.addr }}</td>
+                        <td>{{ job.salary }}</td>
+                        <td>
+                            <a href="" class="btn btn-primary">查看</a>
+                            <a href="" class="btn btn-primary">查看投递</a>
+                            <a href="{{ url_for('tag.company_tag',job_id=job.id) }}" class="btn btn-primary">标签管理</a>
+                            <a href="{{ url_for('job.update',job_id=job.id) }}" class="btn btn-default">编辑</a>
+                            <a href="{{ url_for('job.delete',job_id=job.id) }}" class="btn btn-danger">删除</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {{ render_pagination(pagination, 'user.index') }}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -4,10 +4,18 @@ import re
 from flask import current_app
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, FileField, \
+    SelectField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
-from jobplus.models import User, Company, db, Seeker
+from jobplus.models import User, Company, db, Seeker, Job, Tag
+
+
+class BaseForm(FlaskForm):
+    @staticmethod
+    def delete(obj):
+        db.session.delete(obj)
+        db.session.commit()
 
 
 class RegCompanyFrom(FlaskForm):
@@ -137,4 +145,59 @@ class PasswordForm(FlaskForm):
     def save(self, user):
         user.password = self.password.data
         db.session.add(user)
+        db.session.commit()
+
+
+class JobPublishForm(BaseForm):
+    name = StringField('职位名称', validators=[DataRequired(), Length(2, 12)])
+    _choices = [(getattr(Job, 'SALARY_LEVEL_' + str(i)), getattr(Job, 'SALARY_LEVEL_' + str(i))) for i in range(7)]
+    salary = SelectField(
+        '薪资范围',
+        choices=_choices,
+        coerce=str,
+        default=getattr(Job, 'SALARY_LEVEL_0')
+    )
+    addr = StringField('工作地点', validators=[DataRequired(), Length(2, 12)])
+    experience = IntegerField('工作经验要求(单位：年)', validators=[DataRequired()])
+    desc = TextAreaField('职位详情', validators=[DataRequired()])
+    requires = TextAreaField('职位要求', validators=[DataRequired()])
+    submit = SubmitField('提交')
+
+    def save(self, company):
+        job = Job(
+            company=company,
+            name=self.name.data,
+            salary=self.salary.data,
+            addr=self.addr.data,
+            experience=self.experience.data,
+            desc=self.desc.data,
+            requires=self.requires.data
+        )
+
+        db.session.add(job)
+        db.session.commit()
+
+    def update(self, job):
+        self.populate_obj(job)
+        db.session.add(job)
+        db.session.commit()
+
+
+class TagForm(BaseForm):
+    name = StringField('标签名', validators=[DataRequired(), Length(2, 12)])
+    submit = SubmitField('提交')
+
+    def save(self, job):
+        tag = Tag.query.filter_by(name=self.name.data).first()
+        if not tag:
+            tag = Tag(name=self.name.data)
+        job.tags.append(tag)
+        db.session.add(tag)
+        db.session.add(job)
+        db.session.commit()
+
+    @staticmethod
+    def delete(job, tag):
+        job.tags.remove(tag)
+        db.session.add(job)
         db.session.commit()
