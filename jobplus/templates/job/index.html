@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "macros.html" import render_pagination, render_job %}
+
+{% block title %}
+Job
+{% endblock %}
+
+{% block body %}
+<div class="filterBox">
+    job-filter
+</div>
+
+ <div class="job-list">
+     {% for job in pagination.items %}
+         {{ render_job }}
+     {% endfor %}
+ </div> 
+ {{ render_pagination(pagination, 'job.index') }}
+{% endblock %}
