@@ -1,0 +1,37 @@
+{% macro render_form(form,enctype="",url="") %}
+    <form method='POST' enctype="{{ enctype }}" action="{{ url }}">
+        {{ form.csrf_token }}
+
+        {% for field in form %}
+            {% if field.type == 'CSRFTokenField' %}
+                {{ '' }}
+            {% elif field.type == 'SubmitField' %}
+                {{ form.submit(class='btn btn-primary') }}
+            {% elif field.type == 'RadioField' %}
+                {{ field.label.text }} {{ field() }}
+            {% elif field.type == 'HiddenField' %}
+                {{ field() }}
+            {% elif field.type == 'BooleanField' %}
+                <div class="checkbox">
+                    <label>
+                        {{ field() }} {{ field.label.text }}
+                    </label>
+                </div>
+            {% else %}
+                <div class="form-group {% if field.errors %} has-error {% endif %}">
+                    {{ field.label }}
+                    {% if field.type == 'TextAreaField' %}
+                        {{ field(class='form-control', rows=6,wrap='soft', style='resize:none') }}
+                    {% else %}
+                        {{ field(class='form-control') }}
+                    {% endif %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </form>
+{% endmacro %}
