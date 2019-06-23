@@ -13,3 +13,9 @@ def index():
         error_out=False
     )
     return render_template('company/index_company.html', pagination=pagination)
+
+
+@company.route('/<int:company_id>')
+def detail(company_id):
+    company = Company.query.get_or_404(company_id)
+    return render_template('company/detail.html', company=company)

@@ -26,11 +26,10 @@
                 <tbody>
                 {% for job in pagination.items %}
                     <tr>
-                        <td>{{ job.name }}</td>
+                        <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
                         <td>{{ job.addr }}</td>
                         <td>{{ job.salary }}</td>
                         <td>
-                            <a href="" class="btn btn-primary">查看</a>
                             <a href="" class="btn btn-primary">查看投递</a>
                             <a href="{{ url_for('tag.job_tag',job_id=job.id) }}" class="btn btn-primary">标签管理</a>
                             <a href="{{ url_for('job.update',job_id=job.id) }}" class="btn btn-default">编辑</a>

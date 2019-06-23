@@ -52,3 +52,9 @@ def delete(job_id):
     page = request.args.get('job_page', 1, type=int)
     flash('删除职位成功', 'success')
     return redirect(url_for('user.index', job_page=page))
+
+
+@job.route('/<int:job_id>')
+def detail(job_id):
+    job = Job.query.get_or_404(job_id)
+    return render_template('job/detail.html', job=job)
