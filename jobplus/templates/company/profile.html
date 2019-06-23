@@ -20,6 +20,7 @@
                     <td>名称</td>
                     <td>工作地点</td>
                     <td>薪资范围</td>
+                    <td>发布时间</td>
                     <td>操作</td>
                 </tr>
                 </thead>
@@ -29,6 +30,7 @@
                         <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
                         <td>{{ job.addr }}</td>
                         <td>{{ job.salary }}</td>
+                        <td>{{ job.updated_at }}</td>
                         <td>
                             <a href="" class="btn btn-primary">查看投递</a>
                             <a href="{{ url_for('tag.job_tag',job_id=job.id) }}" class="btn btn-primary">标签管理</a>

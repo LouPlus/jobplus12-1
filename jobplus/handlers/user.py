@@ -13,7 +13,7 @@ def index():
     if current_user.is_seeker:
         return render_template('seeker/index.html')
     elif current_user.is_company:
-        page = request.args.get('job_page', 1, type=int)
+        page = request.args.get('page', 1, type=int)
         pagination = Job.query.filter_by(company_id=current_user.company.id).paginate(
             page=page,
             per_page=10,

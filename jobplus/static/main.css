@@ -35,3 +35,25 @@ span.tag{
 .job-company-info{
     padding: 30px;
 }
+.company-info-container{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.company-info{
+    background: #ffffff;
+    flex: 1;
+    height: 160px;
+    display: flex;
+}
+.company-info>img{
+    width: 160px;
+    height: 160px;
+}
+.company-info-title{
+    flex: 1;
+    padding: 0 20px ;
+}
+.tab-pane{
+    padding: 30px;
+}
