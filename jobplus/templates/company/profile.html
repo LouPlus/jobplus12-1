@@ -32,7 +32,7 @@
                         <td>
                             <a href="" class="btn btn-primary">查看</a>
                             <a href="" class="btn btn-primary">查看投递</a>
-                            <a href="{{ url_for('tag.company_tag',job_id=job.id) }}" class="btn btn-primary">标签管理</a>
+                            <a href="{{ url_for('tag.job_tag',job_id=job.id) }}" class="btn btn-primary">标签管理</a>
                             <a href="{{ url_for('job.update',job_id=job.id) }}" class="btn btn-default">编辑</a>
                             <a href="{{ url_for('job.delete',job_id=job.id) }}" class="btn btn-danger">删除</a>
                         </td>

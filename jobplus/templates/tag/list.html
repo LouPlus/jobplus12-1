@@ -8,7 +8,7 @@
         <h1><a href="{{ url_for('user.index') }}">{{ job.company.name }}</a>的职位：{{ job.name }}</h1>
         <p>
             <a class="btn btn-primary btn-lg"
-               href="{{ url_for('tag.company_tag_create',job_id=job.id) }}"
+               href="{{ url_for('tag.job_tag_create',job_id=job.id) }}"
                role="button">添加标签</a>
         </p>
         <hr>
@@ -25,7 +25,7 @@
                     <tr>
                         <td>{{ tag.name }}</td>
                         <td>
-                            <a href="{{ url_for('tag.company_tag_delete',job_id=job.id,tag_id=tag.id) }}"
+                            <a href="{{ url_for('tag.job_tag_delete',job_id=job.id,tag_id=tag.id) }}"
                                class="btn btn-danger">删除</a>
                         </td>
                     </tr>
