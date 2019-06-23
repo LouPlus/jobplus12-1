@@ -146,6 +146,29 @@ class Job(Base):
     requires = db.Column(db.TEXT)
     tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs')
 
+    @property
+    def experience_text(self):
+        if self.experience:
+            return str(self.experience) + '年经验'
+        else:
+            return '经验不限'
+
+    @property
+    def publish_time(self):
+        time = (datetime.now() - self.updated_at)
+        days = time.days
+        seconds = time.seconds
+        time_str = ''
+        if days:
+            time_str = str(days) + '天之前发布'
+        else:
+            hours = int(seconds / 3600)
+            if hours:
+                time_str = str(hours) + '小时之前发布'
+            else:
+                time_str = '刚刚发布'
+        return time_str
+
 
 class Tag(Base):
     id = db.Column(db.Integer, primary_key=True)

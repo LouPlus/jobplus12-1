@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ job.name }}
+{% endblock %}
+{% block info %}
+    <div class="detail-info">
+        <div class="container">
+            <h3>{{ job.company.name }}</h3>
+            <h1>{{ job.name }}</h1>
+            <h4><span class="salary">{{ job.salary }}</span>/{{ job.addr }}/{{ job.experience_text }}</h4>
+            <h4>
+                {% for tag in job.tags %}
+                    <span class="tag label label-default ">{{ tag.name }}</span>
+                {% endfor %}
+
+            </h4>
+            <h5>{{ job.publish_time }} <a href="" class="btn btn-primary">投递简历</a></h5>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="job-detail row">
+        <div class="col-xs-6 col-md-8">
+            <h3>职位描述</h3>
+            <div class="pre">{{ job.desc }}</div>
+            <h3>职位要求</h3>
+            <div class="pre">{{ job.requires }}</div>
+            <h3>工作地点:</h3>
+            <div>{{ job.addr }}</div>
+        </div>
+        <div class="col-xs-6 col-md-4 job-company-info">
+            <div class="media">
+                <div class="media-left">
+                    <a href="{{ url_for('company.detail',company_id=job.company.id) }}">
+                        <img class="media-object"
+                             src="{{ job.company.logo }}"
+                             alt="{{ job.company.name }}"
+                             width="100"
+                             height="100"
+                        >
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading">{{ job.company.name }}</h4>
+                    <h4 class="media-heading">
+                        <span class="glyphicon glyphicon-home"></span>
+                        {{ job.company.addr }}
+                    </h4>
+                    {% if job.company.website %}
+                        <h4 class="media-heading">
+                            <a href="{{ job.company.website }}">{{ job.company.website }}</a>
+                        </h4>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

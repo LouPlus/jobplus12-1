@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}
+    {{ company.name }}
+{% endblock %}
+{% block info %}
+    <div class="detail-info">
+        <div class="container" style="height: 100%">
+            <div class="company-info-container">
+                <div class="company-info">
+                    <img src="{{ company.logo }}" alt="">
+                    <div class="company-info-title">
+                        <h1>{{ company.name }}</h1>
+                        <h3>{{ company.slogan }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    <div style="padding: 20px 0">
+
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+                <a href="#desc" data-toggle="tab">公司介绍</a>
+            </li>
+            <li role="presentation">
+                <a href="#jobs" data-toggle="tab">在招职位</a>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active pre" id="desc">公司介绍</div>
+            <div role="tabpanel" class="tab-pane" id="jobs">
+                {% if company.jobs %}
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <td>名称</td>
+                            <td>工作地点</td>
+                            <td>薪资范围</td>
+                            <td>发布时间</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for job in company.jobs[:10] %}
+                            <tr>
+                                <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
+                                <td>{{ job.addr }}</td>
+                                <td>{{ job.salary }}</td>
+                                <td>{{ job.publish_time }}</td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+                    {% if company.jobs|length > 10 %}
+                        <a href="" class="btn btn-primary">查看全部</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

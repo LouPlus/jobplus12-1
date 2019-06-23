@@ -38,9 +38,8 @@ def update(job_id):
     form = JobPublishForm(obj=job)
     if form.validate_on_submit():
         form.update(job)
-        page = request.args.get('job_page', 1, type=int)
         flash('编辑职位成功', 'success')
-        return redirect(url_for('user.index', job_page=page))
+        return redirect(url_for('user.index'))
     return render_template('job/update.html', form=form, job_id=job_id)
 
 
@@ -49,6 +48,11 @@ def update(job_id):
 def delete(job_id):
     job = Job.query.get_or_404(job_id)
     JobPublishForm.delete(job)
-    page = request.args.get('job_page', 1, type=int)
     flash('删除职位成功', 'success')
-    return redirect(url_for('user.index', job_page=page))
+    return redirect(url_for('user.index'))
+
+
+@job.route('/<int:job_id>')
+def detail(job_id):
+    job = Job.query.get_or_404(job_id)
+    return render_template('job/detail.html', job=job)

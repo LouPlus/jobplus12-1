@@ -1,11 +1,59 @@
-.navbar{
+.navbar {
     border-radius: 0;
 }
-.form{
+
+.form {
     width: 400px;
     margin: 0 auto;
 }
-.user-info{
+
+.user-info {
     margin: 20px 0;
     font-size: 18px;
+}
+
+.detail-info {
+    width: 100%;
+    height: 220px;
+    background: #eeeeee;
+    margin-top: -20px;
+}
+.salary{
+    color: #fd5f39;
+}
+
+span.tag{
+    background: #fff;
+    color: #70797b;
+    font-weight: normal;
+}
+
+.pre{
+    white-space: pre;
+}
+
+.job-company-info{
+    padding: 30px;
+}
+.company-info-container{
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.company-info{
+    background: #ffffff;
+    flex: 1;
+    height: 160px;
+    display: flex;
+}
+.company-info>img{
+    width: 160px;
+    height: 160px;
+}
+.company-info-title{
+    flex: 1;
+    padding: 0 20px ;
+}
+.tab-pane{
+    padding: 30px;
 }
