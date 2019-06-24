@@ -67,4 +67,17 @@ def post_resume(job_id):
     db.session.add(job)
     db.session.commit()
     flash('投递成功', 'success')
-    return redirect(url_for('job.detail',job_id=job_id))
+    return redirect(url_for('job.detail', job_id=job_id))
+
+
+@job.route('/resume_record/<int:job_id>')
+@company_required
+def resume_record(job_id):
+    job = Job.query.get_or_404(job_id)
+    page = request.args.get('page', 1, type=int)
+    pagination = job.seekers.paginate(
+        page=page,
+        per_page=10,
+        error_out=False
+    )
+    return render_template('job/resume_recode.html', pagination=pagination,job=job)
