@@ -13,13 +13,14 @@ def index():
     if current_user.is_seeker:
         return render_template('seeker/index.html')
     elif current_user.is_company:
+        company = current_user.company
         page = request.args.get('page', 1, type=int)
         pagination = Job.query.filter_by(company_id=current_user.company.id).paginate(
             page=page,
             per_page=10,
             error_out=False
         )
-        return render_template('company/profile.html', pagination=pagination)
+        return render_template('company/profile.html', pagination=pagination,company=company)
 
 
 @user.route('/password/<int:user_id>', methods=['GET', 'POST'])

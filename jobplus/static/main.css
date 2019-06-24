@@ -70,7 +70,16 @@ span.tag {
     border-radius: 5px;
     margin-bottom: 15px;
 }
+
 .timesince {
     font-size: 12px;
     color: #999;
+}
+
+.oneline {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 400px;
+    height: 20px;
 }

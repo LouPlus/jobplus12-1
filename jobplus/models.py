@@ -105,7 +105,7 @@ class Company(Base):
     # 企业网站地址
     website = db.Column(db.String(128))
     # 企业logo
-    logo = db.Column(db.String(256))
+    logo = db.Column(db.String(256), default='//www.lgstatic.com/thumbnail_300x300/images/logo_default.png')
     # 一句话简介
     slogan = db.Column(db.String(64))
 

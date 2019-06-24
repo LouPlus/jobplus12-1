@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, FileField, \
     SelectField, SelectMultipleField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, URL
 
 from jobplus.models import User, Company, db, Seeker, Job, Tag
 
@@ -200,4 +200,47 @@ class TagForm(BaseForm):
     def delete(job, tag):
         job.tags.remove(tag)
         db.session.add(job)
+        db.session.commit()
+
+
+class CompanyProfileForm(FlaskForm):
+    name = StringField('企业名称', validators=[DataRequired(), Length(2, 12)])
+    addr = StringField('地址', validators=[DataRequired()])
+    website = StringField('企业网址')
+    slogan = StringField('一句话介绍', validators=[DataRequired()])
+    desc = TextAreaField('详细介绍', validators=[DataRequired()])
+    submit = SubmitField('提交')
+
+    def save(self, company):
+        self.populate_obj(company)
+        db.session.add(company)
+        db.session.commit()
+
+
+class CompanyLogoForm(FlaskForm):
+    logo = FileField('上传企业头像', validators=[FileRequired()])
+    submit = SubmitField('提交')
+
+    def save(self, company):
+        filename = self.logo.data.filename
+        # 存企业头像文件的文件夹名称
+        logo_folder_name = 'logo'
+        # 访问头像文件的url
+        file_url = '/logos/' + filename
+        # 本地头像文件的路径
+        local_folder = os.path.join(os.path.dirname(current_app.instance_path),
+                                    'jobplus',
+                                    logo_folder_name)
+        # 如果本地不存在存放头像文件的文件夹则创建文件夹
+        if not os.path.isdir(local_folder):
+            os.mkdir(local_folder)
+        # 头像文件存放的本地路径
+        local_filename = os.path.join(local_folder,
+                                      filename)
+        # 将头像文件保存在本地
+        self.logo.data.save(local_filename)
+        # 设置头像的Url
+        company.logo = file_url
+        # 保存到数据库
+        db.session.add(company)
         db.session.commit()

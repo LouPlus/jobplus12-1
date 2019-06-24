@@ -5,9 +5,33 @@
 {% endblock %}
 {% block content %}
     <div class="jumbotron">
-        <h1>Hello, {{ current_user.name }}</h1>
-        <p>...</p>
-        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+        <h2></h2>
+        <div class="row user-info">
+            <div class="media">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object" src="{{ company.logo }}"
+                             width="160" height="160">
+                    </a>
+                </div>
+                <div class="media-body">
+                    <h4 class="media-heading oneline">企业名称:{{ company.name }}</h4>
+                    <h4 class="media-heading oneline">一句话介绍:{{ company.slogan }}</h4>
+                    <h4 class="media-heading oneline">详细介绍:{{ company.desc }}</h4>
+                    <h4 class="media-heading oneline">企业地址:{{ company.addr }}</h4>
+                    <h4 class="media-heading oneline">企业网址:{{ company.website }}</h4>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-12"></div>
+        </div>
+        <p>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('company.logo',company_id=company.id) }}"
+               role="button">上传LOGO</a>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('company.profile',company_id=company.id) }}"
+               role="button">编辑企业资料</a>
+            <a class="btn btn-default btn-lg" href="{{ url_for('user.password',user_id=current_user.id) }}"
+               role="button">修改密码</a>
+        </p>
     </div>
     <div class="job-list">
         <h1>职位列表</h1>
