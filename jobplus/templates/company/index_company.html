@@ -7,13 +7,17 @@ Company
 {% endblock %}
 
 
-{% block body %}
-<div id="filterBox">
-    filter
-</div>
+{% block content %}
+<div class="filterBox">
+        <div class="jumbotron">
+            <h1>Todo: 公司过滤</h1>
+            <p>...</p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+        </div>
+    </div>
 
 
-<div class="company-list">
+<div class="company-list row">
     {% for company in pagination.items %}
         {{ render_company(company) }}
     {% endfor %}
