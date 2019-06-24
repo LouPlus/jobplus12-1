@@ -83,3 +83,13 @@ span.tag {
     width: 400px;
     height: 20px;
 }
+
+.list-more {
+    text-align: center;
+    margin-bottom: 50px;
+}
+a.list-more-btn {
+    padding: 10px 138px;
+	color: #5cb85c;
+    background-color: #fff;
+}

@@ -7,13 +7,16 @@ from flask_login import login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 
 from jobplus.forms import RegCompanyFrom, RegSeekerForm, LoginForm
+from jobplus.models import Job, Company
 
 front = Blueprint('front', __name__)
 
 
 @front.route('/')
 def index():
-    return render_template('index.html')
+    jobs = Job.query.order_by(Job.updated_at.desc()).limit(9).all()
+    companys = Company.query.order_by(Company.updated_at.desc()).limit(8).all()
+    return render_template('index.html',jobs=jobs,companys=companys)
 
 
 @front.route('/register/company', methods=['GET', 'POST'])

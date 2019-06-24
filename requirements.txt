@@ -1,7 +1,11 @@
-wtforms
- flask
- flask-sqlalchemy
- mysqlclient
- flask-migrate
- flask-wtf
- flask-login
+Faker==1.0.7
+filetype==1.0.5
+Flask==1.0.3
+Flask-Login==0.4.1
+Flask-Migrate==2.5.2
+Flask-SQLAlchemy==2.4.0
+Flask-WTF==0.14.2
+mysqlclient==1.4.2.post1
+pypiwin32==223
+Scrapy==1.6.0
+

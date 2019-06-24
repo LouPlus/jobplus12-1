@@ -84,13 +84,13 @@
             <div class="job-top">
                 <div>
                     <a href="{{ url_for('job.detail',job_id=job.id) }}" style="font-weight: bold">{{ job.name }}</a>
-                    <span class="timesince">[{{ job.publish_time }}]</span>
+                    <p class="timesince">[{{ job.publish_time }}]</p>
                 </div>
                 <div class="job-info">
                     <span class="salary">{{ job.salary }}</span>/{{ job.addr }}/{{ job.experience_text }}
                 </div>
                 <div class="labels" style="height: 20px; ">
-                    {% for tag in job.tags %}
+                    {% for tag in job.tags[:3] %}
                         <span class="label lable-primary"
                               style="font-weight:normal;background:#585858;">{{ tag.name }}</span>
                     {% endfor %}
