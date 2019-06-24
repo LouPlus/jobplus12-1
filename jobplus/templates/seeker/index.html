@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% from "macros.html" import render_pagination %}
 {% block title %}
     个人中心
 {% endblock %}
@@ -25,7 +26,37 @@
                role="button">编辑个人资料</a>
             <a class="btn btn-primary btn-lg" href="{{ url_for('seeker.resume',seeker_id=current_user.seeker.id) }}"
                role="button">上传简历</a>
-            <a class="btn btn-default btn-lg" href="{{ url_for('user.password',user_id=current_user.id) }}" role="button">修改密码</a>
+            <a class="btn btn-default btn-lg" href="{{ url_for('user.password',user_id=current_user.id) }}"
+               role="button">修改密码</a>
         </p>
+    </div>
+    <div class="post-record">
+        <h1>简历投递记录</h1>
+        <hr>
+        {% if pagination.items %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>职位名称</td>
+                    <td>公司</td>
+                    <td>职位发布日期</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for job in pagination.items %}
+                    <tr>
+                        <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
+                        <td>
+                            <a href="{{ url_for('company.detail',company_id=job.company.id) }}">{{ job.company.name }}</a>
+                        </td>
+                        <td>{{ job.created_at }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {{ render_pagination(pagination, 'user.index') }}
+        {% else %}
+            空
+        {% endif %}
     </div>
 {% endblock %}

@@ -14,7 +14,19 @@
                 {% endfor %}
 
             </h4>
-            <h5>{{ job.publish_time }} <a href="" class="btn btn-primary">投递简历</a></h5>
+            <h5>
+                {{ job.publish_time }}
+                {% if current_user.is_seeker %}
+                    <a href="{{ url_for('job.post_resume',job_id=job.id) }}"
+                       class="btn btn-primary {% if current_user.seeker in job.seekers %} disabled{% endif %}">
+                        {% if current_user.seeker in job.seekers %}
+                            已投递
+                        {% else %}
+                            投递简历
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </h5>
         </div>
     </div>
 {% endblock %}
