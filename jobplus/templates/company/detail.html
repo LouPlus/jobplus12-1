@@ -32,7 +32,9 @@
 
         <!-- Tab panes -->
         <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active pre" id="desc">公司介绍</div>
+            <div role="tabpanel" class="tab-pane active pre" id="desc">
+                {{ company.desc }}
+            </div>
             <div role="tabpanel" class="tab-pane" id="jobs">
                 {% if company.jobs %}
                     <table class="table">

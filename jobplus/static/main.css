@@ -29,7 +29,8 @@ span.tag {
 }
 
 .pre {
-    white-space: pre;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .job-company-info {
