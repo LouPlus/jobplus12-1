@@ -102,11 +102,16 @@ def job_delete(job_id):
 
 
 # 标签管理
-@admin.route('/tag')
+@admin.route('/tag', methods=['GET', 'POST'])
 @admin_required
 def tag():
     page = request.args.get('page', 1, type=int)
-    pagination = Tag.query.order_by(Tag.updated_at.desc()).paginate(
+    query = Tag.query.order_by(Tag.updated_at.desc())
+    value = request.form.get('value', None)
+    if value:
+        query = Tag.query.filter(Tag.name.like('%{}%'.format(value)))
+
+    pagination = query.paginate(
         per_page=10,
         page=page,
         error_out=False
