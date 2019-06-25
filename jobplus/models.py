@@ -68,10 +68,12 @@ class User(Base, UserMixin):
 
     @property
     def name(self):
-        if self.seeker:
+        if self.is_seeker:
             return self.seeker.name
-        elif self.company:
+        elif self.is_company:
             return self.company.name
+        else:
+            return '管理员'
 
 
 # 求职者和工作的中间表
@@ -100,6 +102,14 @@ class Seeker(Base):
     # 自我描述
     desc = db.Column(db.TEXT)
 
+    @property
+    def email(self):
+        return self.user.email
+
+    @property
+    def role_text(self):
+        return self.user.role_text
+
     posted_jobs = db.relationship('Job', secondary=seeker_job, back_populates='seekers', lazy='dynamic')
 
 
@@ -119,6 +129,14 @@ class Company(Base):
     logo = db.Column(db.String(256), default='//www.lgstatic.com/thumbnail_300x300/images/logo_default.png')
     # 一句话简介
     slogan = db.Column(db.String(64))
+
+    @property
+    def email(self):
+        return self.user.email
+
+    @property
+    def role_text(self):
+        return self.user.role_text
 
 
 # 工作标签中间表

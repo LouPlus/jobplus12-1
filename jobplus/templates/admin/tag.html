@@ -1,0 +1,38 @@
+{% extends 'admin/base.html' %}
+{% from 'macros.html' import render_pagination,tag_search_form %}
+
+{% block title %}
+    标签管理
+{% endblock %}
+
+{% block operation %}
+    <a href="{{ url_for('admin.tag_add') }}" class="btn btn-primary">添加标签</a>
+    {{ tag_search_form() }}
+{% endblock %}
+
+{% block admin %}
+    {% if pagination.items %}
+        <table class="table">
+            <thead>
+            <tr>
+                <td>名称</td>
+                <td>标签被引用数</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tag in pagination.items %}
+                <tr>
+                    <td>{{ tag.name }}</td>
+                    <td>{{ tag.jobs|length }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.tag_delete',tag_id=tag.id) }}"
+                           class="btn btn-danger">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        {{ render_pagination(pagination,'admin.tag') }}
+    {% endif %}
+{% endblock %}
