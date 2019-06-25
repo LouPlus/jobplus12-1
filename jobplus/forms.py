@@ -184,7 +184,7 @@ class JobPublishForm(BaseForm):
 
 
 class TagForm(BaseForm):
-    name = StringField('标签名', validators=[DataRequired(), Length(2, 12)])
+    name = StringField('标签名(2-10)', validators=[DataRequired(), Length(2, 10)])
     submit = SubmitField('提交')
 
     def save(self, job):
@@ -194,6 +194,11 @@ class TagForm(BaseForm):
         job.tags.append(tag)
         db.session.add(tag)
         db.session.add(job)
+        db.session.commit()
+
+    def save_self(self):
+        tag = Tag(name=self.name.data)
+        db.session.add(tag)
         db.session.commit()
 
     @staticmethod
@@ -243,4 +248,62 @@ class CompanyLogoForm(FlaskForm):
         company.logo = file_url
         # 保存到数据库
         db.session.add(company)
+        db.session.commit()
+
+
+class UserForm(BaseForm):
+    email = StringField('邮箱', validators=[DataRequired(), Email()])
+    name = StringField('姓名或企业名', validators=[DataRequired(), Length(2, 12)])
+    password = PasswordField('密码', validators=[DataRequired(), Length(6, 12)])
+    password_repeat = PasswordField('重复密码', validators=[DataRequired(), EqualTo('password')])
+    _choices = ((User.ROLE_SEEKER, '用户'), (User.ROLE_COMPANY, '企业'))
+    role = SelectField(
+        '角色',
+        choices=_choices,
+        coerce=int,
+        default=getattr(Job, 'SALARY_LEVEL_0')
+    )
+    submit = SubmitField('提交')
+
+    def save(self):
+        user = User(
+            email=self.email.data,
+            password=self.password.data,
+            role=self.role.data
+        )
+        db.session.add(user)
+        #
+
+        if user.is_company:
+            company = Company(
+                user=user,
+                name=self.name.data
+            )
+            db.session.add(company)
+        elif user.is_seeker:
+            seeker = Seeker(
+                user=user,
+                name=self.name.data
+            )
+            db.session.add(seeker)
+
+        db.session.commit()
+
+
+class UserUpdateForm(BaseForm):
+    name = StringField('姓名或企业名', validators=[DataRequired(), Length(2, 12)])
+    password = PasswordField('密码(不填不改)')
+    submit = SubmitField('提交')
+
+
+    def save(self, user):
+        if self.password.data:
+            user.password = self.password.data
+            db.session.add(user)
+        if user.is_seeker:
+            user.seeker.name = self.name.data
+            db.session.add(user.seeker)
+        elif user.is_company:
+            user.company.name = self.name.data
+            db.session.add(user.company)
         db.session.commit()

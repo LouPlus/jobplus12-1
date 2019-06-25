@@ -1,0 +1,44 @@
+{% extends 'admin/base.html' %}
+{% from 'macros.html' import render_pagination %}
+
+{% block title %}
+    用户管理
+{% endblock %}
+
+{% block operation %}
+    <a href="{{ url_for('admin.user_add') }}" class="btn btn-primary">添加用户</a>
+{% endblock %}
+
+{% block admin %}
+    {% if pagination.items %}
+        <table class="table">
+            <thead>
+            <tr>
+                <td>名称</td>
+                <td>邮箱</td>
+                <td>角色</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in pagination.items %}
+                <tr>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.role_text }}</td>
+                    <td>
+                        {% if not user.is_admin %}
+                            <a href="{{ url_for('admin.user_update',user_id=user.id) }}"
+                               class="btn btn-primary">修改资料</a>
+                            <a href="{{ url_for('admin.user_delete',user_id=user.id) }}"
+                               class="btn btn-danger">删除</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        {{ render_pagination(pagination,'admin.user') }}
+    {% endif %}
+{% endblock %}

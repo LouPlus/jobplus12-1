@@ -68,10 +68,12 @@ class User(Base, UserMixin):
 
     @property
     def name(self):
-        if self.seeker:
+        if self.is_seeker:
             return self.seeker.name
-        elif self.company:
+        elif self.is_company:
             return self.company.name
+        else:
+            return '管理员'
 
 
 # 求职者和工作的中间表

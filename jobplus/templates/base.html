@@ -31,6 +31,9 @@
             <ul class="nav navbar-nav">
                 <li><a href="{{ url_for('job.index') }}">职位</a></li>
                 <li><a href="{{ url_for('company.index') }}">公司</a></li>
+                {% if current_user.is_admin %}
+                    <li><a href="{{ url_for('admin.index') }}">管理后台</a></li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if not current_user.is_authenticated %}
@@ -45,6 +48,8 @@
                     <ul class="dropdown-menu">
                         {% if not current_user.is_admin %}
                             <li><a href="{{ url_for('user.index') }}">个人中心</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('user.password',user_id=current_user.id) }}">修改密码</a></li>
                         {% endif %}
                         <li><a href="{{ url_for('front.logout') }}">退出</a></li>
                     </ul>

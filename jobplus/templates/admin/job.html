@@ -1,0 +1,38 @@
+{% extends 'admin/base.html' %}
+{% from 'macros.html' import render_pagination %}
+
+{% block title %}
+    职位管理
+{% endblock %}
+
+
+
+{% block admin %}
+    {% if pagination.items %}
+        <table class="table">
+            <thead>
+            <tr>
+                <td>职位名称</td>
+                <td>公司名称</td>
+                <td>工作地点</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for job in pagination.items %}
+                <tr>
+                    <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
+                    <td><a href="{{ url_for('company.detail',company_id=job.company.id) }}">{{ job.company.name }}</a></td>
+                    <td>{{ job.addr }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.job_delete',job_id=job.id) }}"
+                           class="btn btn-danger">删除</a>
+                    </td>
+                </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+        {{ render_pagination(pagination,'admin.job') }}
+    {% endif %}
+{% endblock %}
