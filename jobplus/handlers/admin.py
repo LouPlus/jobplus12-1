@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, url_for, render_template, request, flash
 
 from jobplus.decorators import admin_required
 from jobplus.forms import UserForm, UserUpdateForm, BaseForm, TagForm
-from jobplus.models import User, Job, Tag, Seeker, Company
+from jobplus.models import User, Job, Tag, Seeker, Company, db
 
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -25,7 +25,7 @@ def user():
         if keyword == 1:
             query = Seeker.query.filter(Seeker.name.contains(value))
         elif keyword == 2:
-            query = Company.query.filter(Company.name.contains(value))
+            query = Company.query.filter(Company.name.like('%{}%'.format(value)))
         elif keyword == 3:
             query = User.query.filter(User.email.contains(value))
         page = 1
@@ -71,11 +71,20 @@ def user_delete(user_id):
 
 
 # 职位管理
-@admin.route('/job')
+@admin.route('/job', methods=['GET', 'POST'])
 @admin_required
 def job():
     page = request.args.get('page', 1, type=int)
-    pagination = Job.query.order_by(Job.updated_at.desc()).paginate(
+    query = Job.query.order_by(Job.updated_at.desc())
+    keyword = request.form.get('keyword', None, type=int)
+    value = request.form.get('value', None)
+    if keyword and value:
+        if keyword == 1:
+            query = Job.query.filter(Job.name.contains(value))
+        elif keyword == 2:
+            query = db.session.query(Job).join(Company).filter(Company.name.like('%{}%'.format(value)))
+        page = 1
+    pagination = query.paginate(
         per_page=10,
         page=page,
         error_out=False

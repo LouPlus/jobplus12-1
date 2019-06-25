@@ -1,11 +1,13 @@
 {% extends 'admin/base.html' %}
-{% from 'macros.html' import render_pagination %}
+{% from 'macros.html' import render_pagination,job_search_form %}
 
 {% block title %}
     职位管理
 {% endblock %}
 
-
+{% block operation %}
+    {{ job_search_form() }}
+{% endblock %}
 
 {% block admin %}
     {% if pagination.items %}
