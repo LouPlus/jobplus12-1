@@ -93,3 +93,7 @@ a.list-more-btn {
 	color: #5cb85c;
     background-color: #fff;
 }
+
+.search_form{
+    display: inline;
+}

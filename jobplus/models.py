@@ -102,6 +102,14 @@ class Seeker(Base):
     # 自我描述
     desc = db.Column(db.TEXT)
 
+    @property
+    def email(self):
+        return self.user.email
+
+    @property
+    def role_text(self):
+        return self.user.role_text
+
     posted_jobs = db.relationship('Job', secondary=seeker_job, back_populates='seekers', lazy='dynamic')
 
 
@@ -121,6 +129,14 @@ class Company(Base):
     logo = db.Column(db.String(256), default='//www.lgstatic.com/thumbnail_300x300/images/logo_default.png')
     # 一句话简介
     slogan = db.Column(db.String(64))
+
+    @property
+    def email(self):
+        return self.user.email
+
+    @property
+    def role_text(self):
+        return self.user.role_text
 
 
 # 工作标签中间表

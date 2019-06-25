@@ -1,5 +1,5 @@
 {% extends 'admin/base.html' %}
-{% from 'macros.html' import render_pagination %}
+{% from 'macros.html' import render_pagination,user_search_form %}
 
 {% block title %}
     用户管理
@@ -7,6 +7,7 @@
 
 {% block operation %}
     <a href="{{ url_for('admin.user_add') }}" class="btn btn-primary">添加用户</a>
+    {{ user_search_form() }}
 {% endblock %}
 
 {% block admin %}
