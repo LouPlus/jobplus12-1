@@ -1,9 +1,9 @@
 from flask import render_template, Blueprint, request, flash, redirect, url_for
 from flask_login import current_user
 
-from jobplus.decorators import company_required
+from jobplus.decorators import company_required, seeker_required
 from jobplus.forms import JobPublishForm
-from jobplus.models import Job, Tag
+from jobplus.models import Job, Tag, db
 
 job = Blueprint('job', __name__, url_prefix='/job')
 
@@ -56,3 +56,28 @@ def delete(job_id):
 def detail(job_id):
     job = Job.query.get_or_404(job_id)
     return render_template('job/detail.html', job=job)
+
+
+@job.route('/post_resume/<int:job_id>')
+@seeker_required
+def post_resume(job_id):
+    job = Job.query.get_or_404(job_id)
+    seeker = current_user.seeker
+    job.seekers.append(seeker)
+    db.session.add(job)
+    db.session.commit()
+    flash('投递成功', 'success')
+    return redirect(url_for('job.detail', job_id=job_id))
+
+
+@job.route('/resume_record/<int:job_id>')
+@company_required
+def resume_record(job_id):
+    job = Job.query.get_or_404(job_id)
+    page = request.args.get('page', 1, type=int)
+    pagination = job.seekers.paginate(
+        page=page,
+        per_page=10,
+        error_out=False
+    )
+    return render_template('job/resume_recode.html', pagination=pagination,job=job)

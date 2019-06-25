@@ -74,6 +74,15 @@ class User(Base, UserMixin):
             return self.company.name
 
 
+# 求职者和工作的中间表
+seeker_job = db.Table(
+    'seeker_job',
+    Base.metadata,
+    db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'), primary_key=True, ),
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, )
+)
+
+
 class Seeker(Base):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
@@ -91,6 +100,8 @@ class Seeker(Base):
     # 自我描述
     desc = db.Column(db.TEXT)
 
+    posted_jobs = db.relationship('Job', secondary=seeker_job, back_populates='seekers', lazy='dynamic')
+
 
 class Company(Base):
     id = db.Column(db.Integer, primary_key=True)
@@ -105,7 +116,7 @@ class Company(Base):
     # 企业网站地址
     website = db.Column(db.String(128))
     # 企业logo
-    logo = db.Column(db.String(256))
+    logo = db.Column(db.String(256), default='//www.lgstatic.com/thumbnail_300x300/images/logo_default.png')
     # 一句话简介
     slogan = db.Column(db.String(64))
 
@@ -145,6 +156,7 @@ class Job(Base):
     # 工作要求
     requires = db.Column(db.TEXT)
     tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs')
+    seekers = db.relationship('Seeker', secondary=seeker_job, back_populates='posted_jobs', lazy='dynamic')
 
     @property
     def experience_text(self):

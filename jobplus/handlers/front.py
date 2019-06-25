@@ -1,16 +1,22 @@
 import os
 
-from flask import Blueprint, render_template, redirect, url_for, flash, send_from_directory, current_app, make_response
+import filetype
+from flask import Blueprint, render_template, redirect, url_for, flash, send_from_directory, current_app, make_response, \
+    send_file
 from flask_login import login_user, logout_user, login_required
+from werkzeug.utils import secure_filename
 
 from jobplus.forms import RegCompanyFrom, RegSeekerForm, LoginForm
+from jobplus.models import Job, Company
 
 front = Blueprint('front', __name__)
 
 
 @front.route('/')
 def index():
-    return render_template('index.html')
+    jobs = Job.query.order_by(Job.updated_at.desc()).limit(9).all()
+    companys = Company.query.order_by(Company.updated_at.desc()).limit(8).all()
+    return render_template('index.html',jobs=jobs,companys=companys)
 
 
 @front.route('/register/company', methods=['GET', 'POST'])
@@ -62,3 +68,20 @@ def resume(filename):
     response = make_response(send_from_directory(local_folder, filename, as_attachment=True))
     response.headers["Content-Disposition"] = "attachment; filename={}".format(filename.encode().decode('latin-1'))
     return response
+
+
+@front.route('/logos/<filename>')
+@login_required
+def logos(filename):
+    folder_name = 'logo'
+    filename = secure_filename(filename)
+    local_folder = os.path.join(os.path.dirname(current_app.instance_path),
+                                'jobplus',
+                                folder_name)
+    file_path = os.path.join(local_folder, filename)
+    kind = filetype.guess(file_path)
+
+    mime = 'image/' + filename.split('.')[-1]
+    if kind:
+        mime = kind.mime
+    return send_file(file_path, mimetype=mime)

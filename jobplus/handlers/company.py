@@ -1,4 +1,7 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+
+from jobplus.decorators import company_required
+from jobplus.forms import CompanyProfileForm, CompanyLogoForm
 from jobplus.models import Company
 
 company = Blueprint('company', __name__, url_prefix='/company')
@@ -19,3 +22,27 @@ def index():
 def detail(company_id):
     company = Company.query.get_or_404(company_id)
     return render_template('company/detail.html', company=company)
+
+
+@company.route('/profile/<int:company_id>', methods=['GET', 'POST'])
+@company_required
+def profile(company_id):
+    company = Company.query.get_or_404(company_id)
+    form = CompanyProfileForm(obj=company)
+    if form.validate_on_submit():
+        form.save(company)
+        flash('保存成功', 'success')
+        return redirect(url_for('user.index'))
+    return render_template('company/edit.html', form=form)
+
+
+@company.route('/logo/<int:company_id>', methods=['GET', 'POST'])
+@company_required
+def logo(company_id):
+    company = Company.query.get_or_404(company_id)
+    form = CompanyLogoForm()
+    if form.validate_on_submit():
+        form.save(company)
+        flash('保存成功', 'success')
+        return redirect(url_for('user.index'))
+    return render_template('company/logo.html',form=form)

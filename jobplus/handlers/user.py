@@ -11,15 +11,22 @@ user = Blueprint('user', __name__, url_prefix='/user')
 @login_required
 def index():
     if current_user.is_seeker:
-        return render_template('seeker/index.html')
+        page = request.args.get('page', 1, type=int)
+        pagination = current_user.seeker.posted_jobs.paginate(
+            page=page,
+            per_page=10,
+            error_out=False
+        )
+        return render_template('seeker/index.html', pagination=pagination)
     elif current_user.is_company:
+        company = current_user.company
         page = request.args.get('page', 1, type=int)
         pagination = Job.query.filter_by(company_id=current_user.company.id).paginate(
             page=page,
             per_page=10,
             error_out=False
         )
-        return render_template('company/profile.html', pagination=pagination)
+        return render_template('company/profile.html', pagination=pagination, company=company)
 
 
 @user.route('/password/<int:user_id>', methods=['GET', 'POST'])

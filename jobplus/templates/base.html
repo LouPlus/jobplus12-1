@@ -24,13 +24,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Jobplus</a>
+            <a class="navbar-brand" href="{{ url_for('front.index') }}">Jobplus</a>
         </div>
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-                <li><a href="#">职位</a></li>
-                <li><a href="#">公司</a></li>
+                <li><a href="{{ url_for('job.index') }}">职位</a></li>
+                <li><a href="{{ url_for('company.index') }}">公司</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if not current_user.is_authenticated %}
@@ -53,10 +53,6 @@
         </div><!-- /.navbar-collapse -->
     </div>
 </nav>
-{% block info %}
-
-{% endblock %}
-
 <div class="container">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -69,6 +65,12 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
+</div>
+{% block info %}
+
+{% endblock %}
+
+<div class="container">
 
 
     {% block content %}

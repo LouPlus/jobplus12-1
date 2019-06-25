@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% from "macros.html" import render_pagination %}
+{% block title %}
+    收到的简历
+{% endblock %}
+{% block content %}
+    <div class="post-record">
+        <h1>{{ job.name }}职位收到的简历</h1>
+        <hr>
+        {% if pagination.items %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>姓名</td>
+                    <td>邮箱</td>
+                    <td>联系电话</td>
+                    <td>简历</td>
+                </tr>
+                </thead>
+                <tbody>
+                {% for seeker in pagination.items %}
+                    <tr>
+                        <td>{{ seeker.name }}</td>
+                        <td>{{ seeker.user.email }}</td>
+                        <td>{{ seeker.phone }}</td>
+                        <td>
+                            <a href="{{ seeker.resume }}">下载</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation" class="nav-pagination">
+                <ul class="pagination">
+                    <li {% if not pagination.has_prev %} class="disabled" {% endif %}>
+                        <a href="{{ url_for('job.resume_record',job_id=job.id, page=pagination.prev_num) if pagination.has_prev else '#' }}">&laquo;</a>
+                    </li>
+                    {% for page in pagination.iter_pages() %}
+                        {% if page %}
+                            {% if page != pagination.page %}
+                                <li><a href="{{ url_for('job.resume_record',job_id=job.id, page=page) }}">{{ page }}</a>
+                                </li>
+                            {% else %}
+                                <li class="active"><a href="#">{{ page }}<span class="sr-only">(current)</span></a></li>
+                            {% endif %}
+                        {% else %}
+                            <span class="ellipsis">?</span>
+                        {% endif %}
+                    {% endfor %}
+                    <li {% if not pagination.has_next %} class="disabled" {% endif %}><a
+                            href="{{ url_for('job.resume_record',job_id=job.id, page=pagination.next_num) if pagination.has_next else '#' }}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        {% else %}
+            空
+        {% endif %}
+    </div>
+{% endblock %}

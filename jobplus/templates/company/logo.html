@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import render_form %}
+{% block title %}
+    上传企业LOGO
+{% endblock %}
+{% block content %}
+    <div class="form">
+        {{ render_form(form,enctype='multipart/form-data') }}
+    </div>
+{% endblock %}

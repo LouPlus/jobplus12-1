@@ -2,18 +2,24 @@
 {% from "macros.html" import render_pagination, render_job %}
 
 {% block title %}
-Job
+    Job
 {% endblock %}
 
-{% block body %}
-<div class="filterBox">
-    job-filter
-</div>
+{% block content %}
+    <div class="filterBox">
+        <div class="jumbotron">
+            <h1>Todo: 职位过滤</h1>
+            <p>...</p>
+            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+        </div>
+    </div>
 
- <div class="job-list">
-     {% for job in pagination.items %}
-         {{ render_job }}
-     {% endfor %}
- </div> 
- {{ render_pagination(pagination, 'job.index') }}
+    <div class="job-list row">
+        {% for job in pagination.items %}
+            {{ render_job(job) }}
+        {% endfor %}
+    </div>
+    <div>
+        {{ render_pagination(pagination, 'job.index') }}
+    </div>
 {% endblock %}
