@@ -33,6 +33,13 @@
                                class="btn btn-primary">修改资料</a>
                             <a href="{{ url_for('admin.user_delete',user_id=user.id) }}"
                                class="btn btn-danger">删除</a>
+                            {% if user.enable %}
+                                <a href="{{ url_for('admin.user_disable',user_id=user.id) }}"
+                                   class="btn btn-danger">禁用</a>
+                            {% else %}
+                                <a href="{{ url_for('admin.user_enable',user_id=user.id) }}"
+                                   class="btn btn-success">启用</a>
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

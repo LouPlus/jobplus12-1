@@ -29,6 +29,8 @@ class User(Base, UserMixin):
     __password = db.Column('password', db.String(256), nullable=False)
     # 角色
     role = db.Column(db.SmallInteger, nullable=False)
+    # 账户状态 禁用或启用
+    enable = db.Column(db.Boolean, default=True)
 
     seeker = db.relationship('Seeker', uselist=False)
     company = db.relationship('Company', uselist=False)
@@ -74,6 +76,12 @@ class User(Base, UserMixin):
             return self.company.name
         else:
             return '管理员'
+
+    @staticmethod
+    def status(user, status):
+        user.enable = status
+        db.session.add(user)
+        db.session.commit()
 
 
 # 求职者和工作的中间表
@@ -155,7 +163,7 @@ class Job(Base):
     SALARY_LEVEL_3 = '10k-15k'
     SALARY_LEVEL_4 = '15k-25k'
     SALARY_LEVEL_5 = '25k-50k'
-    SALARY_LEVEL_6 = '50以上'
+    SALARY_LEVEL_6 = '50k以上'
 
     id = db.Column(db.Integer, primary_key=True)
     # 发布工作公司ID
@@ -173,7 +181,7 @@ class Job(Base):
     desc = db.Column(db.TEXT)
     # 工作要求
     requires = db.Column(db.TEXT)
-    tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs')
+    tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs', lazy='dynamic')
     seekers = db.relationship('Seeker', secondary=seeker_job, back_populates='posted_jobs', lazy='dynamic')
 
     @property
@@ -199,9 +207,35 @@ class Job(Base):
                 time_str = '刚刚发布'
         return time_str
 
+    @staticmethod
+    def add_tag(job, tag):
+        job.tags.append(tag)
+        db.session.add(job)
+        db.session.add(tag)
+        db.session.commit()
+
+    @classmethod
+    def get_salary_choices(cls):
+        return (getattr(cls, 'SALARY_LEVEL_' + str(i)) for i in range(7))
+
 
 class Tag(Base):
     id = db.Column(db.Integer, primary_key=True)
     # 标签名称
     name = db.Column(db.String(64), nullable=False, index=True, unique=True)
-    jobs = db.relationship('Job', secondary=job_tag, back_populates='tags')
+    jobs = db.relationship('Job', secondary=job_tag, back_populates='tags', lazy='dynamic')
+
+    @staticmethod
+    def get_have_jobs_count_top_n(n):
+        """
+        获取被职位引用数最多的前N个标签
+        :param n: 
+        :return: [标签ID,标签名称,标签被职位引用个数] 
+        """""
+        sql = 'select tag.id, tag.name, count(job_tag.job_id) as jobs from tag join job_tag ' \
+              'on tag.id = job_tag.tag_id ' \
+              'group by tag.id ' \
+              'order by jobs desc ' \
+              'limit 0,{};'.format(n)
+        tags = tuple(db.engine.execute(sql))
+        return tags

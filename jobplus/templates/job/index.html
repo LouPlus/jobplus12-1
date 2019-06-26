@@ -8,9 +8,33 @@
 {% block content %}
     <div class="filterBox">
         <div class="jumbotron">
-            <h1>Todo: 职位过滤</h1>
-            <p>...</p>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+            <h2>搜索</h2>
+            <form method="post" action="{{ url_for('job.index') }}">
+                <div class="form-group">
+                    <input type="text" name="keyword" class="form-control" placeholder="职位名或公司名">
+                </div>
+                {% if tags %}
+                    <p>
+                        <strong>热门标签：</strong>
+                        {% for tag in tags %}
+                            <a href="{{ url_for('job.index',tag_id=tag[0]) }}">
+                                <span class="label label-info">{{ tag[1] }}</span>
+                            </a>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                {% if salarys %}
+                    <p>
+                        <strong>工资范围：</strong>
+                        {% for salary in salarys %}
+                            <a href="{{ url_for('job.index',salary=salary) }}">
+                                <span class="label label-success">{{ salary }}</span>
+                            </a>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+                <button type="submit" class="btn btn-default ">搜索</button>
+            </form>
         </div>
     </div>
 

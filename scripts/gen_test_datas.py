@@ -54,6 +54,13 @@ def run():
     for job in iter_jobs(companys):
         db.session.add(job)
 
+    admin = User(
+        email='admin@jobplus.com',
+        role=User.ROLE_ADMIN,
+        password='111111'
+    )
+    db.session.add(admin)
+
     try:
         db.session.commit()
     except Exception as e:
