@@ -7,10 +7,16 @@ from jobplus.models import Company
 company = Blueprint('company', __name__, url_prefix='/company')
 
 
-@company.route('/')
+@company.route('/', methods=['GET', 'POST'])
 def index():
     page = request.args.get('page', 1, type=int)
-    pagination = Company.query.paginate(
+    query = Company.query.order_by(Company.updated_at.desc())
+    keyword = request.args.get('keyword') or request.form.get('keyword')
+    if isinstance(keyword, str):
+        keyword = keyword.strip()
+    if keyword:
+        query = Company.query.filter(Company.name.contains(keyword)).order_by(Company.updated_at.desc())
+    pagination = query.paginate(
         page=page,
         per_page=12,
         error_out=False
@@ -45,4 +51,4 @@ def logo(company_id):
         form.save(company)
         flash('保存成功', 'success')
         return redirect(url_for('user.index'))
-    return render_template('company/logo.html',form=form)
+    return render_template('company/logo.html', form=form)

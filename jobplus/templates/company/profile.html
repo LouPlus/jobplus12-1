@@ -57,7 +57,7 @@
                         <td>{{ job.updated_at }}</td>
                         <td>
                             <a href="{{ url_for('job.resume_record',job_id=job.id) }}" class="btn btn-primary">查看投递</a>
-                            <a href="{{ url_for('tag.job_tag',job_id=job.id) }}" class="btn btn-primary">标签管理</a>
+                            <a href="{{ url_for('tag.job_tag',job_id=job.id,back_url=request.url) }}" class="btn btn-primary">标签管理</a>
                             <a href="{{ url_for('job.update',job_id=job.id) }}" class="btn btn-default">编辑</a>
                             <a href="{{ url_for('job.delete',job_id=job.id) }}" class="btn btn-danger">删除</a>
                         </td>

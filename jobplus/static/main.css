@@ -97,3 +97,7 @@ a.list-more-btn {
 .search_form{
     display: inline;
 }
+
+a:focus, a:hover{
+    text-decoration: none;
+}

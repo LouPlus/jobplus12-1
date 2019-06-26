@@ -27,8 +27,10 @@
                     <td><a href="{{ url_for('company.detail',company_id=job.company.id) }}">{{ job.company.name }}</a></td>
                     <td>{{ job.addr }}</td>
                     <td>
+                        <a href="{{ url_for('tag.job_tag',job_id=job.id,back_url=request.url) }}"
+                           class="btn btn-primary">标签管理</a>
                         <a href="{{ url_for('admin.job_delete',job_id=job.id) }}"
-                           class="btn btn-danger">删除</a>
+                        class="btn btn-danger">删除</a>
                     </td>
                 </tr>
             {% endfor %}

@@ -3,26 +3,30 @@
 
 
 {% block title %}
-Company
+    Company
 {% endblock %}
 
 
 {% block content %}
-<div class="filterBox">
+    <div class="filterBox">
         <div class="jumbotron">
-            <h1>Todo: 公司过滤</h1>
-            <p>...</p>
-            <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>
+            <h2>搜索</h2>
+            <form method="post" action="{{ url_for('company.index') }}">
+                <div class="form-group">
+                    <input type="text" name="keyword" class="form-control" placeholder="公司名关键字">
+                </div>
+                <button type="submit" class="btn btn-default ">搜索</button>
+            </form>
         </div>
     </div>
 
 
-<div class="company-list row">
-    {% for company in pagination.items %}
-        {{ render_company(company) }}
-    {% endfor %}
-</div>
+    <div class="company-list row">
+        {% for company in pagination.items %}
+            {{ render_company(company) }}
+        {% endfor %}
+    </div>
 
 
-{{ render_pagination(pagination, 'company.index') }}
+    {{ render_pagination(pagination, 'company.index') }}
 {% endblock %}

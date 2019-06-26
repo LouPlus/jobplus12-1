@@ -23,7 +23,7 @@
             {% for tag in pagination.items %}
                 <tr>
                     <td>{{ tag.name }}</td>
-                    <td>{{ tag.jobs|length }}</td>
+                    <td>{{ tag.jobs.count() }}</td>
                     <td>
                         <a href="{{ url_for('admin.tag_delete',tag_id=tag.id) }}"
                            class="btn btn-danger">删除</a>

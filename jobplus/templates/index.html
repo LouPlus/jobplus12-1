@@ -25,9 +25,12 @@
             {{ render_job(job) }}
         {% endfor %}
     </div>
-    <div class="list-more">
-        <a href="{{ url_for('job.index') }}" class="btn btn-success btn-lg list-more-btn">查看更多</a>
-    </div>
+    {% if jobs %}
+        <div class="list-more">
+            <a href="{{ url_for('job.index') }}" class="btn btn-success btn-lg list-more-btn">查看更多</a>
+        </div>
+    {% endif %}
+
 
     <ul class="nav nav-tabs list-title">
         <li role="presentation" class="active"><a href="#">最新公司</a></li>
@@ -37,7 +40,9 @@
             {{ render_company(company) }}
         {% endfor %}
     </div>
-    <div class="list-more">
-        <a href="{{ url_for('company.index') }}" class="btn btn-success btn-lg list-more-btn">查看更多</a>
-    </div>
+    {% if companys %}
+        <div class="list-more">
+            <a href="{{ url_for('company.index') }}" class="btn btn-success btn-lg list-more-btn">查看更多</a>
+        </div>
+    {% endif %}
 {% endblock %}

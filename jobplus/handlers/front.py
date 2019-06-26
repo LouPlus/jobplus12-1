@@ -14,9 +14,9 @@ front = Blueprint('front', __name__)
 
 @front.route('/')
 def index():
-    jobs = Job.query.order_by(Job.updated_at.desc()).limit(9).all()
+    jobs = Job.query.order_by(Job.updated_at.desc()).limit(8).all()
     companys = Company.query.order_by(Company.updated_at.desc()).limit(8).all()
-    return render_template('index.html',jobs=jobs,companys=companys)
+    return render_template('index.html', jobs=jobs, companys=companys)
 
 
 @front.route('/register/company', methods=['GET', 'POST'])
@@ -45,6 +45,9 @@ def login():
     if form.validate_on_submit():
         user = form.get_user()
         if user:
+            if not user.enable:
+                flash('你的账号已被禁用，请联系管理员admin@jobplus.com', 'danger')
+                return redirect(url_for('.login'))
             login_user(user, form.remember_me.data)
             return redirect(url_for('.index'))
     return render_template('front/login.html', form=form)

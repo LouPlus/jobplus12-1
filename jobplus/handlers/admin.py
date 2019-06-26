@@ -23,9 +23,11 @@ def user():
     query = User.query.order_by(User.updated_at.desc())
     if keyword and value:
         if keyword == 1:
-            query = Seeker.query.filter(Seeker.name.contains(value))
+            # query = Seeker.query.filter(Seeker.name.contains(value))
+            query = User.query.join(Seeker).filter(Seeker.name.contains(value))
         elif keyword == 2:
-            query = Company.query.filter(Company.name.like('%{}%'.format(value)))
+            # query = Company.query.filter(Company.name.like('%{}%'.format(value)))
+            query = User.query.join(Company).filter(Company.name.contains(value))
         elif keyword == 3:
             query = User.query.filter(User.email.contains(value))
         page = 1
@@ -59,6 +61,22 @@ def user_update(user_id):
         flash('修改成功', 'success')
         return redirect(url_for('admin.user'))
     return render_template('admin/form.html', title='修改用户', form=form)
+
+
+@admin.route('/user/disable/<int:user_id>')
+@admin_required
+def user_disable(user_id):
+    user = User.query.get_or_404(user_id)
+    User.status(user, False)
+    return redirect(url_for('.user'))
+
+
+@admin.route('/user/enable/<int:user_id>')
+@admin_required
+def user_enable(user_id):
+    user = User.query.get_or_404(user_id)
+    User.status(user, True)
+    return redirect(url_for('.user'))
 
 
 @admin.route('/user/delete/<int:user_id>')
