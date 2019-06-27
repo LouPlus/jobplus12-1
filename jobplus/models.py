@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy, BaseQuery
+from sqlalchemy import and_
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -93,7 +94,7 @@ class User(Base, UserMixin):
         db.session.commit()
 
 
-class Resume:
+class Resume(Base):
     # 简历未处理
     RESUME_UNTREATED = 0
     # 简历不合适
@@ -101,15 +102,46 @@ class Resume:
     # 简历通过邀请面试
     RESUME_INTERVIEW = 2
 
+    id = db.Column(db.Integer, primary_key=True)
+    seeker_id = db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'))
+    job_id = db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'))
+    freed_back = db.Column('freed_back', db.Integer, default=RESUME_UNTREATED)
 
-# 求职者和工作的中间表
-seeker_job = db.Table(
-    'seeker_job',
-    Base.metadata,
-    db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'), primary_key=True, ),
-    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, ),
-    db.Column('freed_back', db.Integer, default=Resume.RESUME_UNTREATED)
-)
+    seeker = db.relationship('Seeker', uselist=False, backref='resumes')
+    job = db.relationship('Job', uselist=False, backref='resumes')
+
+    @property
+    def feed_back_text(self):
+        map = {
+            self.RESUME_UNTREATED: '未处理',
+            self.RESUME_NOT_SUIT: '不合适',
+            self.RESUME_INTERVIEW: '面试',
+        }
+        return map.get(self.freed_back)
+
+    def set_feedback(self, feedback):
+        self.freed_back = feedback
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get(cls, job_id, seeker_id):
+        resume = Resume.query.filter(
+            and_(
+                Resume.job_id == job_id,
+                Resume.seeker_id == seeker_id
+            )
+        ).first()
+        return resume
+
+    @classmethod
+    def get_by_job_and_feedback(cls, job_id, feedback):
+        return Resume.query.filter(
+            and_(
+                Resume.job_id == job_id,
+                Resume.freed_back == feedback
+            )
+        )
 
 
 class Seeker(Base):
@@ -137,7 +169,11 @@ class Seeker(Base):
     def role_text(self):
         return self.user.role_text
 
-    posted_jobs = db.relationship('Job', secondary=seeker_job, back_populates='seekers', lazy='dynamic')
+    def have_posted_job(self, job_id):
+        return Resume.query.filter(and_(
+            Resume.seeker_id == self.id,
+            Resume.job_id == job_id
+        )).first()
 
 
 class Company(Base):
@@ -204,7 +240,6 @@ class Job(Base):
     online = db.Column(db.Boolean, default=True, index=True)
 
     tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs', lazy='dynamic')
-    seekers = db.relationship('Seeker', secondary=seeker_job, back_populates='posted_jobs', lazy='dynamic')
 
     @property
     def experience_text(self):

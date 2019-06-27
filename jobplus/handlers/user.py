@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user, logout_user
 
 from jobplus.forms import PasswordForm
-from jobplus.models import User, Job
+from jobplus.models import User, Job, Resume
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
@@ -12,7 +12,7 @@ user = Blueprint('user', __name__, url_prefix='/user')
 def index():
     if current_user.is_seeker:
         page = request.args.get('page', 1, type=int)
-        pagination = current_user.seeker.posted_jobs.paginate(
+        pagination = Resume.query.filter_by(seeker_id=current_user.seeker.id).paginate(
             page=page,
             per_page=10,
             error_out=False

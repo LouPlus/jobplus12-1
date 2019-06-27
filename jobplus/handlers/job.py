@@ -4,7 +4,7 @@ from sqlalchemy import or_, and_
 
 from jobplus.decorators import company_required, seeker_required, company_admin_required
 from jobplus.forms import JobPublishForm
-from jobplus.models import Job, Tag, db, Company, job_tag
+from jobplus.models import Job, Tag, db, Company, job_tag, Resume
 
 job = Blueprint('job', __name__, url_prefix='/job')
 
@@ -89,19 +89,14 @@ def delete(job_id):
 @job.route('/<int:job_id>')
 def detail(job_id):
     job = Job.query.get_or_404(job_id)
-    return render_template('job/detail.html', job=job)
+    i_publish_this = False
+    if current_user.is_company and job.company_id == current_user.company.id:
+        i_publish_this = True
 
-
-@job.route('/post_resume/<int:job_id>')
-@seeker_required
-def post_resume(job_id):
-    job = Job.query.get_or_404(job_id)
-    seeker = current_user.seeker
-    job.seekers.append(seeker)
-    db.session.add(job)
-    db.session.commit()
-    flash('投递成功', 'success')
-    return redirect(url_for('job.detail', job_id=job_id))
+    have_posted_job = False
+    if current_user.is_seeker:
+        have_posted_job = current_user.seeker.have_posted_job(job_id)
+    return render_template('job/detail.html', job=job, have_posted_job=have_posted_job, i_publish_this=i_publish_this)
 
 
 @job.route('/resume_record/<int:job_id>')
@@ -109,12 +104,10 @@ def post_resume(job_id):
 def resume_record(job_id):
     job = Job.query.get_or_404(job_id)
     page = request.args.get('page', 1, type=int)
-    pagination = job.seekers.paginate(
-        page=page,
-        per_page=10,
-        error_out=False
-    )
-    return render_template('job/resume_recode.html', pagination=pagination, job=job)
+    feedback = request.args.get('feedback', 0, type=int)
+    query = Resume.get_by_job_and_feedback(job_id, feedback)
+    pagination = Resume.query_pagination(query, page)
+    return render_template('job/resume_recode.html', pagination=pagination, job=job, feedback=feedback)
 
 
 @job.route('/offline/<int:job_id>')

@@ -40,16 +40,20 @@
                     <td>职位名称</td>
                     <td>公司</td>
                     <td>职位发布日期</td>
+                    <td>投递日期</td>
+                    <td>投递反馈</td>
                 </tr>
                 </thead>
                 <tbody>
-                {% for job in pagination.items %}
+                {% for resume in pagination.items %}
                     <tr>
-                        <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
+                        <td><a href="{{ url_for('job.detail',job_id=resume.job.id) }}">{{ resume.job.name }}</a></td>
                         <td>
-                            <a href="{{ url_for('company.detail',company_id=job.company.id) }}">{{ job.company.name }}</a>
+                            <a href="{{ url_for('company.detail',company_id=resume.job.company.id) }}">{{ resume.job.company.name }}</a>
                         </td>
-                        <td>{{ job.created_at }}</td>
+                        <td>{{ resume.job.created_at }}</td>
+                        <td>{{ resume.created_at }}</td>
+                        <td>{{ resume.feed_back_text }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

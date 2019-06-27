@@ -17,12 +17,12 @@
             <h5>
                 {{ job.publish_time }}
                 {% if current_user.is_seeker %}
-                    <a href="{{ url_for('job.post_resume',job_id=job.id) }}"
-                       class="btn btn-primary {% if current_user.seeker in job.seekers or not current_user.seeker.resume
+                    <a href="{{ url_for('resume.post',job_id=job.id,seeker_id=current_user.seeker.id) }}"
+                       class="btn btn-primary {% if have_posted_job or not current_user.seeker.resume
                        or not current_user.seeker.phone or not job.online %} disabled{% endif %}">
                         {% if not job.online %}
                             已下线
-                        {% elif current_user.seeker in job.seekers %}
+                        {% elif have_posted_job %}
                             已投递
                         {% elif not current_user.seeker.resume %}
                             请先在个人中心上传简历
@@ -76,4 +76,11 @@
 
         </div>
     </div>
+
+    {% if i_publish_this %}
+        <div style="padding: 30px 0;">
+            <a href="{{ url_for('job.resume_record',job_id=job.id) }}"
+        class="btn btn-primary">查看收到的简历</a>
+        </div>
+    {% endif %}
 {% endblock %}
