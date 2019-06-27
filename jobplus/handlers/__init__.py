@@ -5,3 +5,4 @@ from .job import job
 from .company import company
 from .tag import tag
 from .admin import admin
+from .resume import resume

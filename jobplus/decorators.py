@@ -12,10 +12,10 @@ def role_required(role):
         def wrapper(*args, **kwargs):
             if not isinstance(role, list):
                 if not current_user.is_authenticated or current_user.role != role:
-                    abort(404)
+                    abort(403)
             else:
                 if not current_user.is_authenticated or current_user.role not in role:
-                    abort(404)
+                    abort(403)
             return func(*args, **kwargs)
 
         return wrapper

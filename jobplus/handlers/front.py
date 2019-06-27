@@ -14,7 +14,7 @@ front = Blueprint('front', __name__)
 
 @front.route('/')
 def index():
-    jobs = Job.query.order_by(Job.updated_at.desc()).limit(8).all()
+    jobs = Job.query.filter_by(online=True).order_by(Job.updated_at.desc()).limit(8).all()
     companys = Company.query.order_by(Company.updated_at.desc()).limit(8).all()
     return render_template('index.html', jobs=jobs, companys=companys)
 

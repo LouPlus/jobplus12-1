@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
+from sqlalchemy import and_
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -10,8 +11,17 @@ db = SQLAlchemy()
 class Base(db.Model):
     __abstract__ = True
 
+    PER_PAGE = 10
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @classmethod
+    def query_pagination(cls, query, page, per_page=10):
+        return query.paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
 
 
 class User(Base, UserMixin):
@@ -84,13 +94,54 @@ class User(Base, UserMixin):
         db.session.commit()
 
 
-# 求职者和工作的中间表
-seeker_job = db.Table(
-    'seeker_job',
-    Base.metadata,
-    db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'), primary_key=True, ),
-    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, )
-)
+class Resume(Base):
+    # 简历未处理
+    RESUME_UNTREATED = 0
+    # 简历不合适
+    RESUME_NOT_SUIT = 1
+    # 简历通过邀请面试
+    RESUME_INTERVIEW = 2
+
+    id = db.Column(db.Integer, primary_key=True)
+    seeker_id = db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'))
+    job_id = db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'))
+    freed_back = db.Column('freed_back', db.Integer, default=RESUME_UNTREATED)
+
+    seeker = db.relationship('Seeker', uselist=False, backref='resumes')
+    job = db.relationship('Job', uselist=False, backref='resumes')
+
+    @property
+    def feed_back_text(self):
+        map = {
+            self.RESUME_UNTREATED: '未处理',
+            self.RESUME_NOT_SUIT: '不合适',
+            self.RESUME_INTERVIEW: '面试',
+        }
+        return map.get(self.freed_back)
+
+    def set_feedback(self, feedback):
+        self.freed_back = feedback
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def get(cls, job_id, seeker_id):
+        resume = Resume.query.filter(
+            and_(
+                Resume.job_id == job_id,
+                Resume.seeker_id == seeker_id
+            )
+        ).first()
+        return resume
+
+    @classmethod
+    def get_by_job_and_feedback(cls, job_id, feedback):
+        return Resume.query.filter(
+            and_(
+                Resume.job_id == job_id,
+                Resume.freed_back == feedback
+            )
+        )
 
 
 class Seeker(Base):
@@ -118,7 +169,11 @@ class Seeker(Base):
     def role_text(self):
         return self.user.role_text
 
-    posted_jobs = db.relationship('Job', secondary=seeker_job, back_populates='seekers', lazy='dynamic')
+    def have_posted_job(self, job_id):
+        return Resume.query.filter(and_(
+            Resume.seeker_id == self.id,
+            Resume.job_id == job_id
+        )).first()
 
 
 class Company(Base):
@@ -181,8 +236,10 @@ class Job(Base):
     desc = db.Column(db.TEXT)
     # 工作要求
     requires = db.Column(db.TEXT)
+    # 是否上线 默认是
+    online = db.Column(db.Boolean, default=True, index=True)
+
     tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs', lazy='dynamic')
-    seekers = db.relationship('Seeker', secondary=seeker_job, back_populates='posted_jobs', lazy='dynamic')
 
     @property
     def experience_text(self):
@@ -217,6 +274,15 @@ class Job(Base):
     @classmethod
     def get_salary_choices(cls):
         return (getattr(cls, 'SALARY_LEVEL_' + str(i)) for i in range(7))
+
+    @property
+    def online_text(self):
+        return '上线' if self.online else '下线'
+
+    def set_status(self, status):
+        self.online = status
+        db.session.add(self)
+        db.session.commit()
 
 
 class Tag(Base):

@@ -44,6 +44,8 @@
         {% endfor %}
     </div>
     <div>
-        {{ render_pagination(pagination, 'job.index') }}
+        {% if pagination.itmes %}
+            {{ render_pagination(pagination, 'job.index') }}
+        {% endif %}
     </div>
 {% endblock %}

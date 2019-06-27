@@ -160,3 +160,80 @@
         <button type="submit" class="btn btn-default">搜索</button>
     </form>
 {% endmacro %}
+
+{% macro render_resume_table(pagination, job,feedback) %}
+    <div class="post-record">
+        <h1><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a>职位收到的简历</h1>
+        <hr>
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="{% if feedback==0 %}active{% endif %}">
+                <a href="{{ url_for('job.resume_record',job_id=job.id,feedback=0) }}">未处理</a>
+            </li>
+            <li class="{% if feedback==1 %}active{% endif %}">
+                <a href="{{ url_for('job.resume_record',job_id=job.id,feedback=1) }}">不合适</a>
+            </li>
+            <li class="{% if feedback==2 %}active{% endif %}">
+                <a href="{{ url_for('job.resume_record',job_id=job.id,feedback=2) }}">面试</a>
+            </li>
+        </ul>
+        {% if pagination.items %}
+            <table class="table">
+                <thead>
+                <tr>
+                    <td>姓名</td>
+                    <td>邮箱</td>
+                    <td>联系电话</td>
+                    <td>投递时间</td>
+                    <td>简历</td>
+                    {% if not feedback %}
+                        <td>操作</td>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for resume in pagination.items %}
+                    <tr>
+                        <td>{{ resume.seeker.name }}</td>
+                        <td>{{ resume.seeker.user.email }}</td>
+                        <td>{{ resume.seeker.phone }}</td>
+                        <td>{{ resume.created_at }}</td>
+                        <td>
+                            <a href="{{ resume.seeker.resume }}">下载</a>
+                        </td>
+                        {% if not feedback %}
+                            <td>
+                                <a href="{{ url_for('resume.interview',job_id=job.id,seeker_id=resume.seeker.id) }}">面试</a>
+                                <a href="{{ url_for('resume.reject',job_id=job.id,seeker_id=resume.seeker.id) }}">不合适</a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation" class="nav-pagination">
+                <ul class="pagination">
+                    <li {% if not pagination.has_prev %} class="disabled" {% endif %}>
+                        <a href="{{ url_for('job.resume_record',job_id=job.id, page=pagination.prev_num) if pagination.has_prev else '#' }}">&laquo;</a>
+                    </li>
+                    {% for page in pagination.iter_pages() %}
+                        {% if page %}
+                            {% if page != pagination.page %}
+                                <li><a href="{{ url_for('job.resume_record',job_id=job.id, page=page) }}">{{ page }}</a>
+                                </li>
+                            {% else %}
+                                <li class="active"><a href="#">{{ page }}<span class="sr-only">(current)</span></a></li>
+                            {% endif %}
+                        {% else %}
+                            <span class="ellipsis">?</span>
+                        {% endif %}
+                    {% endfor %}
+                    <li {% if not pagination.has_next %} class="disabled" {% endif %}><a
+                            href="{{ url_for('job.resume_record',job_id=job.id, page=pagination.next_num) if pagination.has_next else '#' }}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        {% else %}
+            <div style="padding: 30px">空</div>
+        {% endif %}
+    </div>
+{% endmacro %}
