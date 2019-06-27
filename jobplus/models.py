@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
@@ -10,8 +10,17 @@ db = SQLAlchemy()
 class Base(db.Model):
     __abstract__ = True
 
+    PER_PAGE = 10
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    @classmethod
+    def query_pagination(cls, query, page, per_page=10):
+        return query.paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
 
 
 class User(Base, UserMixin):
@@ -84,12 +93,22 @@ class User(Base, UserMixin):
         db.session.commit()
 
 
+class Resume:
+    # 简历未处理
+    RESUME_UNTREATED = 0
+    # 简历不合适
+    RESUME_NOT_SUIT = 1
+    # 简历通过邀请面试
+    RESUME_INTERVIEW = 2
+
+
 # 求职者和工作的中间表
 seeker_job = db.Table(
     'seeker_job',
     Base.metadata,
     db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'), primary_key=True, ),
-    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, )
+    db.Column('job_id', db.Integer, db.ForeignKey('job.id', ondelete='CASCADE'), primary_key=True, ),
+    db.Column('freed_back', db.Integer, default=Resume.RESUME_UNTREATED)
 )
 
 
@@ -181,6 +200,9 @@ class Job(Base):
     desc = db.Column(db.TEXT)
     # 工作要求
     requires = db.Column(db.TEXT)
+    # 是否上线 默认是
+    online = db.Column(db.Boolean, default=True, index=True)
+
     tags = db.relationship('Tag', secondary=job_tag, back_populates='jobs', lazy='dynamic')
     seekers = db.relationship('Seeker', secondary=seeker_job, back_populates='posted_jobs', lazy='dynamic')
 
@@ -217,6 +239,15 @@ class Job(Base):
     @classmethod
     def get_salary_choices(cls):
         return (getattr(cls, 'SALARY_LEVEL_' + str(i)) for i in range(7))
+
+    @property
+    def online_text(self):
+        return '上线' if self.online else '下线'
+
+    def set_status(self, status):
+        self.online = status
+        db.session.add(self)
+        db.session.commit()
 
 
 class Tag(Base):
