@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy, BaseQuery
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -22,6 +22,31 @@ class Base(db.Model):
             per_page=per_page,
             error_out=False
         )
+
+    @staticmethod
+    def delete(obj):
+        db.session.delete(obj)
+        db.session.commit()
+
+    def update(self, form):
+        form.populate_obj(self)
+        db.session.add(self)
+        db.session.commit()
+
+    @classmethod
+    def add(cls, form):
+        obj = cls()
+        form.populate_obj(obj)
+        db.session.add(obj)
+        db.session.commit()
+
+    @classmethod
+    def add_for_seeker(cls, form, seeker):
+        obj = cls()
+        form.populate_obj(obj)
+        obj.seeker = seeker
+        db.session.add(obj)
+        db.session.commit()
 
 
 class User(Base, UserMixin):
@@ -144,6 +169,42 @@ class Resume(Base):
         )
 
 
+class Education(Base):
+    LEVEL0 = '高中以下'
+    LEVEL1 = '本科'
+    LEVEL2 = '研究生'
+    LEVEL3 = '博士及以上'
+    id = db.Column(db.Integer, primary_key=True)
+    # 学校名称
+    name = db.Column(db.String(32), nullable=False)
+    # 入学时间
+    in_time = db.Column(db.DateTime, nullable=False)
+    # 毕业时间
+    out_time = db.Column(db.DateTime, nullable=False)
+    # 学历
+    level = db.Column('level', db.SmallInteger, default=1)
+    # 专业名称
+    pro = db.Column(db.String(32), nullable=False)
+    seeker_id = db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'))
+    seeker = db.relationship('Seeker', uselist=False, backref='educations')
+
+    @classmethod
+    def get_level_choices(cls):
+        choices = ((i, getattr(cls, 'LEVEL' + str(i))) for i in range(4))
+        return tuple(choices)
+
+    @property
+    def level_text(self):
+        map = {
+            0: '高中以下',
+            1: '本科',
+            2: '研究生',
+            3: '博士及以上'
+        }
+        text = map.get(self.level)
+        return text
+
+
 class Seeker(Base):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
@@ -160,6 +221,10 @@ class Seeker(Base):
     work_experience = db.Column(db.TEXT)
     # 自我描述
     desc = db.Column(db.TEXT)
+    # 年龄
+    age = db.Column(db.SmallInteger)
+    # 最高学历
+    education = db.Column(db.SmallInteger)
 
     @property
     def email(self):
@@ -174,6 +239,40 @@ class Seeker(Base):
             Resume.seeker_id == self.id,
             Resume.job_id == job_id
         )).first()
+
+
+class Experiences(Base):
+    id = db.Column(db.Integer, primary_key=True)
+    # 公司名称
+    name = db.Column(db.String(32), nullable=False)
+    # 所属部门
+    department = db.Column(db.String(32))
+    # 职位名称
+    job_name = db.Column(db.String(32), nullable=False)
+    # 入职时间
+    in_time = db.Column(db.DateTime, nullable=False)
+    # 离职时间
+    out_time = db.Column(db.DateTime, nullable=False)
+    # 工作内容
+    work_content = db.Column(db.TEXT)
+
+    seeker_id = db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'))
+    seeker = db.relationship('Seeker', uselist=False, backref='experiences')
+
+
+class Project(Base):
+    id = db.Column(db.Integer, primary_key=True)
+    # 项目名称
+    name = db.Column(db.String(32), nullable=False)
+    # 项目开始时间
+    in_time = db.Column(db.DateTime, nullable=False)
+    # 项目结束时间
+    out_time = db.Column(db.DateTime, nullable=False)
+    # 项目描述
+    desc = db.Column(db.TEXT)
+
+    seeker_id = db.Column('seeker_id', db.Integer, db.ForeignKey('seeker.id', ondelete='CASCADE'))
+    seeker = db.relationship('Seeker', uselist=False, backref='projects')
 
 
 class Company(Base):

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import render_normal_field,render_text_field,render_btn_field %}
+{% block title %}
+    添加教育经历
+{% endblock %}
+{% block content %}
+    <div class="form">
+        <form method='POST'>
+            {{ form.csrf_token }}
+            {{ render_normal_field(form.name) }}
+            {{ render_normal_field(form.level) }}
+            {{ render_normal_field(form.in_time) }}
+            {{ render_normal_field(form.out_time) }}
+            {{ render_normal_field(form.pro) }}
+            {{ render_btn_field(form.submit,'primary') }}
+        </form>
+    </div>
+{% endblock %}

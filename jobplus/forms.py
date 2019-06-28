@@ -5,10 +5,10 @@ from flask import current_app
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileRequired
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, TextAreaField, FileField, \
-    SelectField, SelectMultipleField
+    SelectField, SelectMultipleField, DateTimeField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, URL
 
-from jobplus.models import User, Company, db, Seeker, Job, Tag
+from jobplus.models import User, Company, db, Seeker, Job, Tag, Education
 
 
 class BaseForm(FlaskForm):
@@ -86,8 +86,16 @@ class LoginForm(FlaskForm):
 
 
 class SeekerProfileForm(FlaskForm):
+    _choices = Education.get_level_choices()
     name = StringField('真实姓名', validators=[DataRequired(), Length(2, 12)])
     phone = StringField('手机号', validators=[DataRequired()])
+    age = IntegerField('年纪', validators=[DataRequired()])
+    education = SelectField(
+        '最高学历',
+        choices=_choices,
+        coerce=int,
+        default=1
+    )
     work_year = IntegerField('工作年限', validators=[DataRequired()])
     work_experience = TextAreaField('工作经历', validators=[DataRequired(), Length(10, 250)])
     desc = TextAreaField('自我评价', validators=[DataRequired(), Length(10, 250)])
@@ -105,6 +113,57 @@ class SeekerProfileForm(FlaskForm):
     def validate_phone(self, field):
         if not re.match(r"^1[35678]\d{9}$", field.data):
             raise ValidationError('请填写正确的手机号码')
+
+
+class ExperienceForm(FlaskForm):
+    name = StringField('公司名称', validators=[DataRequired(), Length(2, 12)])
+    department = StringField('所属部门', validators=[DataRequired(), Length(2, 12)])
+    job_name = StringField('职位名称', validators=[DataRequired(), Length(2, 12)])
+    in_time = DateField('入职时间(年-月-日)', validators=[DataRequired()], format='%Y-%m-%d')
+    out_time = DateField('离职时间(年-月-日)', format='%Y-%m-%d')
+    work_content = TextAreaField('工作内容', validators=[DataRequired(), Length(10, 250)])
+    submit = SubmitField('提交')
+
+    def validate_out_time(self, field):
+        if field.data:
+            delta = field.data - self.in_time.data
+            if delta.days <= 0:
+                raise ValidationError('离职时间必须比入职时间晚')
+
+
+class ProjectForm(FlaskForm):
+    name = StringField('项目名称', validators=[DataRequired(), Length(2, 12)])
+    in_time = DateField('项目开始时间(年-月-日)', validators=[DataRequired()], format='%Y-%m-%d')
+    out_time = DateField('项目结束时间(年-月-日)', format='%Y-%m-%d')
+    desc = TextAreaField('项目描述', validators=[DataRequired(), Length(10, 250)])
+    submit = SubmitField('提交')
+
+    def validate_out_time(self, field):
+        if field.data:
+            delta = field.data - self.in_time.data
+            if delta.days <= 0:
+                raise ValidationError('项目结束时间必须比项目开始时间晚')
+
+
+class EducationForm(FlaskForm):
+    _choices = Education.get_level_choices()
+    name = StringField('学校名称', validators=[DataRequired(), Length(2, 12)])
+    in_time = DateField('入学时间(年-月-日)', validators=[DataRequired()], format='%Y-%m-%d')
+    out_time = DateField('毕业时间(年-月-日)', format='%Y-%m-%d')
+    level = SelectField(
+        '最高学历',
+        choices=_choices,
+        coerce=int,
+        default=1
+    )
+    pro = StringField('专业名称', validators=[DataRequired(), Length(2, 12)])
+    submit = SubmitField('提交')
+
+    def validate_out_time(self, field):
+        if field.data:
+            delta = field.data - self.in_time.data
+            if delta.days <= 0:
+                raise ValidationError('毕业时间必须比入学时间晚')
 
 
 class SeekerResumeForm(FlaskForm):
@@ -294,7 +353,6 @@ class UserUpdateForm(BaseForm):
     name = StringField('姓名或企业名', validators=[DataRequired(), Length(2, 12)])
     password = PasswordField('密码(不填不改)')
     submit = SubmitField('提交')
-
 
     def save(self, user):
         if self.password.data:

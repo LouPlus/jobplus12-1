@@ -13,10 +13,10 @@ def profile(seeker_id):
     user = Seeker.query.get_or_404(seeker_id)
     form = SeekerProfileForm(obj=user)
     if form.validate_on_submit():
-        form.save(user)
+        user.update(form)
         flash('保存成功', 'success')
         return redirect(url_for('user.index'))
-    return render_template('seeker/profile.html', form=form)
+    return render_template('seeker/profile.html', form=form, user=user)
 
 
 @seeker.route('/resume/<int:seeker_id>', methods=['GET', 'POST'])

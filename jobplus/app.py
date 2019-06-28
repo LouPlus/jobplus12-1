@@ -4,10 +4,10 @@ from flask_migrate import Migrate
 
 from jobplus.filters import add_link_suffix
 from jobplus.models import db, User
+from jobplus.handlers import *
 
 
 def register_blueprint(app):
-    from jobplus.handlers import front, user, seeker, job, company, tag, admin, resume
     app.register_blueprint(front)
     app.register_blueprint(user)
     app.register_blueprint(seeker)
@@ -16,6 +16,9 @@ def register_blueprint(app):
     app.register_blueprint(tag)
     app.register_blueprint(admin)
     app.register_blueprint(resume)
+    app.register_blueprint(experience)
+    app.register_blueprint(education)
+    app.register_blueprint(project)
 
 
 def register_extensions(app):

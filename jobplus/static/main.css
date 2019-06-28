@@ -6,6 +6,10 @@
     width: 400px;
     margin: 0 auto;
 }
+.form-bg{
+    width: 600px;
+    margin: 0 auto;
+}
 
 .user-info {
     margin: 20px 0;
@@ -100,4 +104,10 @@ a.list-more-btn {
 
 a:focus, a:hover{
     text-decoration: none;
+}
+
+ul,li{
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
