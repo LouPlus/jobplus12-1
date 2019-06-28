@@ -237,3 +237,36 @@
         {% endif %}
     </div>
 {% endmacro %}
+
+{% macro render_normal_field(field) %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{ field.label }} {{ field(class='form-control') }}
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <span class="help-block">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_text_field(field) %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{ field.label }} {{ field(class='form-control', rows=6,wrap='soft', style='resize:none') }}
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <span class="help-block">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_btn_field(field,class) %}
+    <div class="form-group {% if field.errors %} has-error {% endif %}">
+        {{ field(class='btn btn-'+class) }}
+        {% if field.errors %}
+            {% for error in field.errors %}
+                <span class="help-block">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}

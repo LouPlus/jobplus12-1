@@ -6,3 +6,6 @@ from .company import company
 from .tag import tag
 from .admin import admin
 from .resume import resume
+from .experience import experience
+from .education import education
+from .project import project
