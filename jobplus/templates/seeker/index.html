@@ -24,6 +24,8 @@
         <p>
             <a class="btn btn-primary btn-lg" href="{{ url_for('seeker.profile',seeker_id=current_user.seeker.id) }}"
                role="button">编辑个人资料</a>
+            <a class="btn btn-primary btn-lg" href="{{ url_for('seeker.detail',seeker_id=current_user.seeker.id) }}"
+               role="button">预览个人资料</a>
             <a class="btn btn-primary btn-lg" href="{{ url_for('seeker.resume',seeker_id=current_user.seeker.id) }}"
                role="button">上传简历</a>
             <a class="btn btn-default btn-lg" href="{{ url_for('user.password',user_id=current_user.id) }}"

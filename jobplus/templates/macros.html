@@ -193,7 +193,9 @@
                 <tbody>
                 {% for resume in pagination.items %}
                     <tr>
-                        <td>{{ resume.seeker.name }}</td>
+                        <td>
+                            <a href="{{ url_for('seeker.detail',seeker_id=resume.seeker.id) }}">{{ resume.seeker.name }}</a>
+                        </td>
                         <td>{{ resume.seeker.user.email }}</td>
                         <td>{{ resume.seeker.phone }}</td>
                         <td>{{ resume.created_at }}</td>
@@ -267,6 +269,115 @@
             {% for error in field.errors %}
                 <span class="help-block">{{ error }}</span>
             {% endfor %}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_experiences(experiences,operations=False) %}
+    <div class="experiences">
+        {% if experiences %}
+            <ul>
+                {% for experience in experiences %}
+                    <li>
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ experience.name }}/{{ experience.department }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ experience.in_time.strftime('%Y/%m') }}-{{ experience.out_time.strftime('%Y/%m') }}
+                            </div>
+                            {% if operations %}
+                                <div class="col-md-4">
+                                    <a href="{{ url_for('experience.update',experience_id=experience.id) }}">编辑</a>
+                                    <a href="{{ url_for('experience.delete',experience_id=experience.id) }}">删除</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            岗位：{{ experience.job_name }}
+                        </div>
+                        <div>
+                            工作内容：{{ experience.work_content }}
+                        </div>
+                        <hr>
+                    </li>
+                {% endfor %}
+
+            </ul>
+        {% else %}
+
+            空
+            <hr>
+
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_educations(educations,operations=False) %}
+    <div class="experiences">
+        {% if educations %}
+            <ul>
+                {% for education in educations %}
+                    <li>
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ education.name }}/{{ education.level_text }}/{{ education.pro }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ education.in_time.strftime('%Y') }}-{{ education.out_time.strftime('%Y') }}
+                            </div>
+                            {% if operations %}
+                                <div class="col-md-4">
+                                    <a href="{{ url_for('education.update',education_id=education.id) }}">编辑</a>
+                                    <a href="{{ url_for('education.delete',education_id=education.id) }}">删除</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <hr>
+                    </li>
+                {% endfor %}
+
+            </ul>
+        {% else %}
+            空
+            <hr>
+
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro render_projects(projects,operations=False) %}
+    <div class="experiences">
+        {% if projects %}
+            <ul>
+                {% for project in projects %}
+                    <li>
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ project.name }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ project.in_time.strftime('%Y-%m-%d') }}-{{ project.out_time.strftime('%Y-%m-%d') }}
+                            </div>
+                            {% if operations %}
+                                <div class="col-md-4">
+                                    <a href="{{ url_for('project.update',project_id=project.id) }}">编辑</a>
+                                    <a href="{{ url_for('project.delete',project_id=project.id) }}">删除</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            项目描述：{{ project.desc }}
+                        </div>
+                        <hr>
+                    </li>
+                {% endfor %}
+
+            </ul>
+        {% else %}
+            空
+            <hr>
+
         {% endif %}
     </div>
 {% endmacro %}

@@ -234,6 +234,17 @@ class Seeker(Base):
     def role_text(self):
         return self.user.role_text
 
+    @property
+    def education_text(self):
+        map = {
+            0: '高中以下',
+            1: '本科',
+            2: '研究生',
+            3: '博士及以上'
+        }
+        text = map.get(self.education)
+        return text
+
     def have_posted_job(self, job_id):
         return Resume.query.filter(and_(
             Resume.seeker_id == self.id,

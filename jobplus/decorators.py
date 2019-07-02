@@ -28,3 +28,4 @@ seeker_required = role_required(User.ROLE_SEEKER)
 admin_required = role_required(User.ROLE_ADMIN)
 
 company_admin_required = role_required([User.ROLE_COMPANY, User.ROLE_ADMIN])
+company_seeker_required = role_required([User.ROLE_COMPANY, User.ROLE_SEEKER])
