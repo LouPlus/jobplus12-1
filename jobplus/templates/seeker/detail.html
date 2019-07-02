@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% from 'macros.html' import render_projects,render_educations,render_experiences %}
+
+{% block title %}
+    个人信息
+{% endblock %}
+{% block content %}
+    <h1 class="text-center">个人信息</h1>
+    <table class="table">
+        <tr>
+            <td>姓名</td>
+            <td>年龄</td>
+            <td>年龄最高学历</td>
+            <td>工作年限</td>
+            <td>联系电话</td>
+        </tr>
+        <tr>
+            <td>{{ seeker.name }}</td>
+            <td>{{ seeker.age }}</td>
+            <td>{{ seeker.education_text }}</td>
+            <td>{{ seeker.work_year }}</td>
+            <td>{{ seeker.phone }}</td>
+        </tr>
+        <tr>
+            <td colspan="5">工作经历</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                {{ render_experiences(seeker.experiences) }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">教育经历</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                {{ render_educations(seeker.educations) }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">项目经历</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                {{ render_educations(seeker.projects) }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="5">自我评价</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <div style="white-space: pre-line;word-wrap: break-word">
+                    {{ seeker.desc }}
+                </div>
+            </td>
+        </tr>
+    </table>
+{% endblock %}
