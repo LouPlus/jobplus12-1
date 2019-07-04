@@ -53,8 +53,8 @@
                         <td>
                             <a href="{{ url_for('company.detail',company_id=resume.job.company.id) }}">{{ resume.job.company.name }}</a>
                         </td>
-                        <td>{{ resume.job.created_at }}</td>
-                        <td>{{ resume.created_at }}</td>
+                        <td>{{ moment(resume.job.created_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
+                        <td>{{ moment(resume.created_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
                         <td>{{ resume.feed_back_text }}</td>
                     </tr>
                 {% endfor %}
