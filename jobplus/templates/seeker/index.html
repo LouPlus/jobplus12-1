@@ -10,8 +10,6 @@
             <div class="col-xs-4 col-md-3">姓名：{{ current_user.name }}</div>
             <div class="col-xs-4 col-md-3">联系电话：{{ current_user.seeker.phone }}</div>
             <div class="col-xs-4 col-md-3">工作年限：{{ current_user.seeker.work_year }}</div>
-            <div class="col-xs-12 col-md-12">工作经历：{{ current_user.seeker.work_experience }}</div>
-            <div class="col-xs-12 col-md-12">自我评价：{{ current_user.seeker.desc }}</div>
             <div class="col-xs-12 col-md-12">
                 简历：
                 {% if current_user.seeker.resume %}
@@ -20,6 +18,8 @@
                     未上传
                 {% endif %}
             </div>
+
+            <div class="col-xs-12 col-md-12">自我评价：{{ current_user.seeker.desc }}</div>
         </div>
         <p>
             <a class="btn btn-primary btn-lg" href="{{ url_for('seeker.profile',seeker_id=current_user.seeker.id) }}"
