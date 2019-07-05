@@ -90,11 +90,11 @@ def delete(job_id):
 def detail(job_id):
     job = Job.query.get_or_404(job_id)
     i_publish_this = False
-    if current_user.is_company and job.company_id == current_user.company.id:
+    if current_user.is_authenticated and current_user.is_company and job.company_id == current_user.company.id:
         i_publish_this = True
 
     have_posted_job = False
-    if current_user.is_seeker:
+    if current_user.is_authenticated and current_user.is_seeker:
         have_posted_job = current_user.seeker.have_posted_job(job_id)
     return render_template('job/detail.html', job=job, have_posted_job=have_posted_job, i_publish_this=i_publish_this)
 

@@ -15,7 +15,7 @@
 
             </h4>
             <h5>
-                {{ job.publish_time }}
+                {{ moment().fromTime(job.updated_at)}}发布
                 {% if current_user.is_seeker %}
                     <a href="{{ url_for('resume.post',job_id=job.id,seeker_id=current_user.seeker.id) }}"
                        class="btn btn-primary {% if have_posted_job or not current_user.seeker.resume

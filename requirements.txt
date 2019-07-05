@@ -6,4 +6,4 @@ Flask-Migrate==2.5.2
 Flask-SQLAlchemy==2.4.0
 Flask-WTF==0.14.2
 mysqlclient==1.4.2.post1
-
+Flask-Moment==0.8.0

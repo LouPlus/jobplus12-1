@@ -55,7 +55,7 @@
                         <td><a href="{{ url_for('job.detail',job_id=job.id) }}">{{ job.name }}</a></td>
                         <td>{{ job.addr }}</td>
                         <td>{{ job.salary }}</td>
-                        <td>{{ job.updated_at }}</td>
+                        <td>{{ moment(job.updated_at).format('YYYY-MM-DD HH:mm:ss') }}</td>
                         <td>{{ job.online_text }}</td>
                         <td>
                             {% if job.online %}

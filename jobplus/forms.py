@@ -97,7 +97,7 @@ class SeekerProfileForm(FlaskForm):
         default=1
     )
     work_year = IntegerField('工作年限', validators=[DataRequired()])
-    work_experience = TextAreaField('工作经历', validators=[DataRequired(), Length(10, 250)])
+    # work_experience = TextAreaField('工作经历', validators=[DataRequired(), Length(10, 250)])
     desc = TextAreaField('自我评价', validators=[DataRequired(), Length(10, 250)])
     submit = SubmitField('提交')
 

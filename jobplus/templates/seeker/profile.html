@@ -13,7 +13,7 @@
             {{ render_normal_field(form.education) }}
             {{ render_normal_field(form.work_year) }}
             <!--工作经历 -->
-            {{ form.work_experience.label }}
+            <label for="">工作经历</label>
             <a href="{{ url_for('experience.add',seeker_id=user.id) }}" style="margin-left: 20px">添加</a>
             <hr>
             {{ render_experiences(user.experiences,operations=True) }}
